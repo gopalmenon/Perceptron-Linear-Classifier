@@ -1,0 +1,49 @@
+\section{Warm up: Feature expansion}
+
+\begin{enumerate}
+
+\item Consider the following function that maps the examples in $\Re^2$ into a higher space $\Re^3$:
+\begin{equation*}
+\phi: \left ( x_1, x_2 \right ) \rightarrow \left (x_1, x_2, f_r \left (x_1, x_2 \right ) \right )
+\end{equation*}
+
+This has the effect of raising the positively labelled examples in the newly introduced dimension. I\textquotesingle m not sure about the mathematical notation, but my intention is to map the function from two-dimensional to three-dimensional space. 
+
+\item In order to verify that this achieves a linear separation between the positive and negative examples, I will define a weight vector $w$ which includes a bias term as follows:
+\begin{equation*}
+     w=\begin{bmatrix}
+         0\\
+         0 \\
+         0\\
+         1
+        \end{bmatrix}
+  \end{equation*}
+
+The dot product of the weight vector transpose and an example (here the example has a dimension in addition to the added third dimension in order to accommodate the bias) will be
+ \begin{equation*}
+    \begin{bmatrix}
+         0 & 0 & 0 & 1
+     \end{bmatrix}
+     \cdot
+        \begin{bmatrix}
+         1\\
+         x_1 \\
+         x_2\\
+         f_r \left (x_1, x_2 \right )
+        \end{bmatrix}\\
+         = 
+        \left\{
+            \begin{array}{rl}
+      +1 & 4x_1^4 + 16x_2^4 \leq r;\\
+      -1 & \mbox{otherwise}
+    \end{array}
+    \right.
+   \end{equation*}
+
+This means that the weight vector $w$ can be used to separate out the positive and negative labelled examples. The hyperplane that separates the positive and negative labelled examples will pass through the origin (since the bias is zero) and will be perpendicular to the weight vector $w$. The dot product of the weight vector and any example will give the distance of the example point from the linearly separating plane (since it\textquotesingle s a projection of the example vector on the weight vector) that separates the positive and negative examples, we can see that the dot product is $+1$ for positively labelled examples and is $-1$ for negatively labelled examples. Hence the weight vector $w$ separates out the examples with different labels.
+\end{enumerate}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "hw"
+%%% End:
