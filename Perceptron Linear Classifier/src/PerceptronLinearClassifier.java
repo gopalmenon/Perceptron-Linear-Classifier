@@ -19,6 +19,7 @@ public class PerceptronLinearClassifier {
 	private List<Double> weights;
 	private int numberOfEpochs;
 	private int numberOfFeatures;
+	private double learningRate;
 	
 	/**
 	 * Constructor
@@ -27,7 +28,7 @@ public class PerceptronLinearClassifier {
 	 * @param trainingDataFileName
 	 * @param testingDataFileName
 	 */
-	public PerceptronLinearClassifier(boolean useZeroWeights, int numberOfEpochs, String trainingDataFileName, String testingDataFileName) {
+	public PerceptronLinearClassifier(boolean useZeroWeights, int numberOfEpochs, double learningRate, String trainingDataFileName, String testingDataFileName) {
 				
 		this.randomNumberGenerator = new Random(System.currentTimeMillis());
 		
@@ -54,6 +55,7 @@ public class PerceptronLinearClassifier {
 		}
 		
 		this.numberOfEpochs = numberOfEpochs;
+		this.learningRate = learningRate;
 		
 	}
 	
@@ -102,9 +104,13 @@ public class PerceptronLinearClassifier {
 	}
 
 	
+	/**
+	 * Online training by considering training examples one at a time and updating weights and bias 
+	 */
 	public void train() {
 		
 		try {
+			double dotProductOfWeightsAndFeatures = 0.0;
 			for (int epochCounter = 0; epochCounter < this.numberOfEpochs; ++epochCounter) {
 				
 				//Loop through the training data and fine tune the weights and bias
@@ -112,20 +118,41 @@ public class PerceptronLinearClassifier {
 				int label = 0;
 				for (int trainingDataRowCounter = 0; trainingDataRowCounter < this.rawTrainingData.size(); ++trainingDataRowCounter) {
 					
+					//Get label and feature values for training data row
 					trainingDataRow = this.rawTrainingData.get(trainingDataRowCounter);
 					String[] labelAndFeatures = trainingDataRow.split(WHITESPACE_REGEX);
 					label = Integer.parseInt(labelAndFeatures[0]);
 					List<Integer> featureValues = getFeatureValues(labelAndFeatures);
-					getDotProductOfWeightsWithInput(featureValues);
 					
+					//Get the dot product of weights and features
+					dotProductOfWeightsAndFeatures = getDotProductOfWeightsWithInput(featureValues);
 					
-					
+					//Update weights and bias if needed
+					if (weightUpdateRequired(dotProductOfWeightsAndFeatures, label)) {
+						updateWeightsAndBias(label, featureValues);
+					}
 				}
 				
 			}
 		} catch (NumberFormatException e) {
 			System.err.println("Invalid label value in training data.");
 			System.exit(0);
+		}
+		
+	}
+	
+	/**
+	 * @param testingDataRow
+	 * @return the label that will be the sign of the dot product between the testing data and the input features 
+	 */
+	public int predict(String testingDataRow) {
+		
+		String[] labelAndFeatures = testingDataRow.split(WHITESPACE_REGEX);
+		List<Integer> featureValues = getFeatureValues(labelAndFeatures);
+		if (getDotProductOfWeightsWithInput(featureValues) >= 0.0) {
+			return 1;
+		} else {
+			return -1;
 		}
 		
 	}
@@ -143,7 +170,7 @@ public class PerceptronLinearClassifier {
 			for (String rawFeatures : labelAndFeatures) {
 				
 				//The first element will be 1 so that it gets multiplied by the bias in the weight vector
-				if (loopIndex++ == 0) {
+				if (loopIndex == 0) {
 					featureValues.add(Integer.valueOf(1));
 				} else {
 					featureAndValue = rawFeatures.split(LABEL_DATA_SEPARATOR);
@@ -161,7 +188,7 @@ public class PerceptronLinearClassifier {
 					featureValues.add(Integer.valueOf(currentFeatureValue));
 					
 				}
-				
+				++loopIndex;
 			}
 			
 			//Add the rest of the features with zero values
@@ -179,10 +206,56 @@ public class PerceptronLinearClassifier {
 		
 	}
 	
+	/**
+	 * @param featureValues
+	 * @return dot product of the weights with the feature values
+	 */
 	private double getDotProductOfWeightsWithInput(List<Integer> featureValues) {
 		
+		int weightCounter = 0;
+		double dotProduct = 0.0;
 		
-		return 0.0;
+		for (Double weight : this.weights) {
+			dotProduct += weight.doubleValue() * featureValues.get(weightCounter++).intValue();
+		}
+		
+		return dotProduct;
+		
+	}
+	
+	/**
+	 * @param dotProductOfWeightsAndFeatures
+	 * @return true if weights and bias need to be updated
+	 */
+	protected boolean weightUpdateRequired(double dotProductOfWeightsAndFeatures, int labelValue) {
+		
+		if (dotProductOfWeightsAndFeatures * labelValue <= 0) {
+			return true;
+		} else {
+			return false;
+		}
+		
+	}
+	
+	/**
+	 * Update the weights and bias 
+	 * @param label
+	 * @param featureValues
+	 */
+	private void updateWeightsAndBias(int label, List<Integer> featureValues) {
+		
+		int weightsCounter = 0;
+		for (Double weight : this.weights) {
+			
+			if (weightsCounter == 0) {
+				//Update the bias
+				this.weights.set(weightsCounter, weight.doubleValue() + (double) (this.learningRate * label));
+			} else {
+				//Update the weight
+				this.weights.set(weightsCounter, Double.valueOf(weight.doubleValue() + (double) (this.learningRate * label * featureValues.get(weightsCounter).intValue())));
+			}
+			++weightsCounter;
+		}
 		
 	}
 }
