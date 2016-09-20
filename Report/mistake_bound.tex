@@ -1,73 +1,51 @@
 \section{Mistake Bound Model of Learning}
+\begin{enumerate}
 
-Consider an instance space consisting of {\bf integer points} on the
-two dimensional plane $(x_1, x_2)$ with $-80 \leq x_1, x_2 \leq 80$.
-Let $\mathcal C$ be a concept class defined on this instance space.
-Each function $f_r$ in $\mathcal C$ is defined by a radius $r$ (with
-$100 \leq r \leq 6400$) as follows:
 
-\begin{equation}
-f_r(x_1, x_2) = \left\{
+\item[1.] Each function $f_r$ in the concept class $\mathcal{C}$ is defined by a radius $r$. Since $1 \leq r \leq 80$ and $r$ is being compared with the sum of the squares of two integers, we need only consider integral values of $r$. So each function  $f_r$ in the concept class $\mathcal{C}$ that needs to be considered, will have a different integral value of $r$. So $|\mathcal{C}| = 80$.
+  
+\item[2.] [5 points] We need to check if the following equality is true
+
+\begin{equation*}
+y^t = \left\{
     \begin{array}{rl}
-      +1 & x_1^2 + x_2^2 \leq r^2;\\
+      +1 & (x_1^t)^2 + (x_2^t)^2 \leq r^2;\\
       -1 & \mbox{otherwise}
     \end{array}
 \right.
 \label{eq:f_r}
-\end{equation}
+\end{equation*}
 
+If it is not true then it means that the hypothesis $f_r$ has made a mistake.
 
-Our goal is to come up with a error-driven algorithm that will learn
-the correct function $f \in \mathcal{C}$ that correctly classifies a
-dataset.
+\item[3.] [10 points] Consider the case when the label is $-1$ and the prediction is $+1$ because $x_1^2 + x_2^2 \leq r^2$. In order to correct this, we need to update $r$ to make it $x_1^2 + x_2^2 > r^2$ or $r = \floor*{\sqrt{x_1^2 + x_2^2 - 1}}$.\\
 
-\paragraph{Side notes}
-\begin{enumerate}
-\item Recall that a concept class is the set of functions from which
-  the true target function is drawn and the hypothesis space is the
-  set of functions that the learning algorithm searches over. In this
-  question, both these are the same set.
-\item Assume that there is no noise. That is, assume that the data is
-  separable using the hypothesis class.
-\end{enumerate}
+Consider the case when the label is $+1$ and the prediction is $-1$ because $x_1^2 + x_2^2 > r^2$. In order to correct this, we need to update $r$ to make it $r = \ceil*{\sqrt{x_1^2 + x_2^2}}$.\\
 
+In both cases above, we need to consider only the positive value of the square root.
 
-\paragraph{Questions}
+\item[4.] [20 points] Here is a mistake-driven learning algorithm to learn the function.
 
-\begin{enumerate}
+\begin{minipage}{\linewidth}
+  \begin{algorithm}[H]
+    \caption{Mistake-Driven Learning Algorithm}\label{MDLA}
+    \begin{algorithmic}[1]
+      \Procedure{Mistake-Driven Learning Algorithm}{$x_1, x_2, y$}
+	\If {$x_1^2 + x_2^2 \leq r^2$}
+	  \If {label is $-1$}
+	    \State $r = \floor*{\sqrt{x_1^2 + x_2^2 - 1}}$
+	  \EndIf
+	\Else 
+	  \If {label is $+1$}
+	   \State $r = \ceil*{\sqrt{x_1^2 + x_2^2}}$
+	  \EndIf
+	\EndIf
+      \EndProcedure
+    \end{algorithmic}
+  \end{algorithm}
+\end{minipage}\\
 
-
-\item[1.] [5 points] Determine $|\mathcal{C}|$, the size of concept
-  class.
-  
-  Since both $x_1$ and $x_2$ can range from $-80$ to $80$, $x_1^2 + x_2^2$ will range from $0$ to $12,800$, and since $100 \leq r \leq 6400$, $r^2$ will range from $10,000$ to $40,960,000$. Each step in this range of $r^2$ can represent a function $f_r \in \mathcal{C}$. We only need to consider integer values as $x_1^2 + x_2^2$ will always be an integer. This means that
-  \begin{equation*}
-  \begin{split}
-  |\mathcal{C}| &= 40,960,000 - 10,000 + 1\\
-  &= 40,960,001
-  \end{split} 
-  \end{equation*}
-  
-\item[2.] [5 points] To design an error driven learning algorithm, we
-  should be able to first write down what it means to make a mistake.
-  Suppose our current guess for the function is $f_r$ defined as in
-  Equation \ref{eq:f_r} above. Say we get an input point $(x_1^t,
-  x_2^t)$ along with its label $y^t$. Write down an expression (an
-  equality or an inequality) in terms of $x_1^t$, $x_2^t$, $y^t$ and
-  $r$ that checks whether the current hypothesis $f_r$ has made a
-  mistake.
-
-\item[3.] [10 points] Next, we need to specify how we will update a
-  hypothesis if there is an error. Since $f_r$ is completely defined
-  in terms of $r$, we only need to update $r$. How will you update $r$
-  if there is an error? Consider errors for both positive and negative
-  examples.
-
-\item[4.] [20 points] Use the answers from the previous two steps to
-  write a mistake-driven learning algorithm to learn the function.
-  Please write the algorithm concisely in the form of pseudocode. What
-  is the maximum number of mistakes that this algorithm can make on
-  any dataset?
+Here the algorithm receives as input the values of $x_1$, $x_2$ and the label $y$. It then uses these values to update the value of $r$ that it maintains in its internal state.
 
 \item[5.] ({\bf For 6350 students})[15 points total] We have seen the
   Halving algorithm in class. The Halving algorithm will maintain a
