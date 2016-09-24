@@ -49,24 +49,47 @@ Here the algorithm receives as input the values of $x_1$, $x_2$ and the label $y
 
 Since the correct function will use a value of $r$ between $1$ and $80$, the worst case scenario for learning the correct function will be the case where all the functions with the incorrect value of $r$ are first tried and the test data results in a wrong prediction in each such case. So the correct function will be the last one tried and will be found after making 79 (that is $\left | \mathcal{C} - 1 \right |$) mistakes. 
 
-\item[5.] ({\bf For 6350 students})[15 points total] We have seen the
-  Halving algorithm in class. The Halving algorithm will maintain a
-  set of hypotheses consistent with all the examples seen so far and
-  predict using the most frequent label among this set. Upon making a
-  mistake, the algorithm prune at least half of this set. In this
-  question, you will design and analyze a Halving algorithm for this
-  particular concept space.
-
+\item[5.] 
   \begin{enumerate}
-  \item[a.] [5 points] The set of hypotheses consistent with all
-    examples seen so far can be defined by storing only two integers.
-    How would you do this?
-  \item[b.] [5 points] How would you check if there is an error for an
-    example $(x_1^t, x_2^t)$ that has the label $y^t$?
-  \item[c.] [5 points] Write the full Halving algorithm for this
-    specific concept space. (Do not write the same Halving algorithm
-    we saw in class. You need to tailor it to this problem.) What is
-    its mistake bound?
+  \item[a.] The set of hypotheses consistent with all examples seen so far can be defined by storing the upper and lower values of the range of $r$ values that satisfy the examples seen so far.
+  \item[b.] [5 points] At any point in the iteration of the halving algorithm, we can check and see if the value of $r^2$ corresponding to the lowest value of $r$ in the range of $r$ values in the top half of the ranges of $r$ satisfies the following
+   \begin{equation*}
+y^t = \left\{
+    \begin{array}{rl}
+      +1 & (x_1^t)^2 + (x_2^t)^2 \leq r^2;\\
+      -1 & \mbox{otherwise}
+    \end{array}
+\right.
+\label{eq:f_r}
+\end{equation*}
+
+  \item[c.] [5 points] The halving algorithm can be as follows:
+  
+\floatevery{algorithm}{\setlength\hsize{15cm}}
+\begin{minipage}{\linewidth}
+  \begin{algorithm}[H]
+    \caption{Halving Algorithm}\label{MDLA}
+    \begin{algorithmic}[1]
+      \Procedure{Halving Algorithm}{$x_1^t, x_2^t, y^t$}
+	\State  \parbox[t]{\dimexpr\linewidth-\algorithmicindent} {Construct sets $R_1$ and $R_2$ by splitting the sorted set $R$ of remaining $r$ values down the middle. The split is made such that for the case of odd number of $r$ values, the set $R_2$ will contain one more element than $R_1$}
+	\If {$\left | R_1 \right | ==  \left | R_2 \right | $ and $\left | R_1 \right | \neq 1$}
+	 \State Remove largest vaue of $r$ from $R_1$ and put it into $R_2$ \label{lst:line:majority}
+	\EndIf
+	\State $r_t =$ minimum value of r in set $R_2$
+	\If {$(x_1^t)^2 + (x_2^t)^2 \leq r_t^2$ and $y^t == -1$} \label{lst:line:majorityWrong}
+	  \State $R = R_1$
+	  \If {$\left | R \right | == 1$}
+	    \State \parbox[t]{\dimexpr\linewidth-\algorithmicindent} {The function has been learnt and is $f_r$ where $r =$ the element in set $R$}
+	  \EndIf
+	\EndIf
+      \EndProcedure
+    \end{algorithmic}
+  \end{algorithm}
+\end{minipage}\\
+
+In the above halving algorithm, in step~\ref{lst:line:majority}, the set $R_2$ is made the majority set if it is not already one. In the case where there is only one element left in each split set, there is no change made. The majority step is used to make a prediction. If the prediction is wrong, the entire set is dropped from the list of potential values of $r$ that will be considered to be the value used in the target function. This step where the majority set is checked is shown in line~\ref{lst:line:majorityWrong}.\\
+
+The halving algorithm discards at least half the functions from the hypothesis set each time its makes a mistake in the prediction. In the worst case, the algorithm discards exactly half the functions from the hypothesis set. This means that it uses at most $log_2 \left | \mathcal{C} \right |$ steps to arrive at the correct function. Here $\mathcal{C}$ is the concept class that the algorithm searches over. This means that the mistake bound (the number of steps in the worst case) is $log_2 80$.
   \end{enumerate}
 
 \end{enumerate}
