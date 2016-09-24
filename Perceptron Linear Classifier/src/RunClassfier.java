@@ -35,9 +35,7 @@ public class RunClassfier {
 			System.err.println("Error while trying to extract labels from test data.");
 			e.printStackTrace();
 		}
-		
-		
-		
+
 	}
 
 }

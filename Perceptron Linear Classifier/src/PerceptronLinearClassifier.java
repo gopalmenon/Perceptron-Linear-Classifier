@@ -8,6 +8,7 @@ import java.util.Random;
 public class PerceptronLinearClassifier {
 	
 	public static final String FEATURE_VALUE_SEPARATOR = ":";	
+	public static final int MINIMUM_SHUFFLES = 10;
 	
 	private Random randomNumberGenerator;
 	private boolean useZeroWeights;
@@ -77,7 +78,7 @@ public class PerceptronLinearClassifier {
 				}
 				
 				if (this.numberOfEpochs > 1) {
-					
+					shuffleData(labels, featureVectors);
 				}
 				
 			}
@@ -208,6 +209,37 @@ public class PerceptronLinearClassifier {
 				this.weights.set(weightsCounter, Double.valueOf(weight.doubleValue() +  (this.learningRate * (double) label * featureValues.get(weightsCounter).doubleValue())));
 			}
 			++weightsCounter;
+		}
+		
+	}
+	
+	private void shuffleData(List<Integer> labels, List<String> featureVectors) {
+		
+		//Generate a random number for the number of times to shuffle the data  
+		int numberOfTimesToSuffle = this.randomNumberGenerator.nextInt(MINIMUM_SHUFFLES + labels.size() / 2), swapContentsWith1 = 0, swapContentsWith2 = 0, tempLabel = 0;
+		String tempFeatureVector = null;
+		
+		//Shuffle the data
+		for (int shuffleCounter = 0; shuffleCounter < numberOfTimesToSuffle; ++shuffleCounter) {
+			
+			//Randomly generate the row numbers to shuffle
+			swapContentsWith1 = this.randomNumberGenerator.nextInt(labels.size());
+			swapContentsWith2 = this.randomNumberGenerator.nextInt(labels.size());
+			
+			//Swap the contents
+			if (swapContentsWith1 != swapContentsWith2) {
+				
+				tempLabel = labels.get(swapContentsWith1);
+				tempFeatureVector = featureVectors.get(swapContentsWith1);
+				
+				labels.set(swapContentsWith1, labels.get(swapContentsWith2));
+				featureVectors.set(swapContentsWith1, featureVectors.get(swapContentsWith2));
+				
+				labels.set(swapContentsWith2, tempLabel);
+				featureVectors.set(swapContentsWith2, tempFeatureVector);
+				
+			}
+			
 		}
 		
 	}
