@@ -6,14 +6,18 @@ import java.util.List;
 
 public class DataFileReader {
 	
+	public static String WHITESPACE_REGEX = "\\s";
+
+
 	/**
 	 * @param filePath
-	 * @return a list of strings having file contents
+	 * @return labels and features 
 	 * @throws IOException
 	 */
-	public static List<String> getDataFileContents(String filePath) throws IOException {
+	public static LabelsAndFeatures getDataFileContents(String filePath) throws IOException {
 		
-		List<String> dataFileContents = new ArrayList<String>();
+		List<Integer> labels = new ArrayList<Integer>();
+		List<String> featureVectors = new ArrayList<String>();
 		BufferedReader bufferedReader = null;
 		
 		try {
@@ -23,51 +27,20 @@ public class DataFileReader {
 			while (fileLine != null) {
 				
 				if (fileLine.trim().length() > 0) {
-					dataFileContents.add(fileLine.trim());
+					
+					labels.add(Integer.parseInt(fileLine.trim().split(WHITESPACE_REGEX)[0]));
+					featureVectors.add(fileLine.trim().substring(fileLine.trim().indexOf(' ') + 1));
 				}
 				fileLine = bufferedReader.readLine();
 			}
 			bufferedReader.close();
-		} catch (IOException e) {
-			throw e;
-		}
-		
-		return dataFileContents;
-		
-	}
-	
-	/**
-	 * @param filePath
-	 * @return a list of label values which will be the first column in the data
-	 * @throws IOException
-	 */
-	public static List<Integer> getLabelValues(String filePath) throws IOException {
-		
-		List<Integer> labelValues = new ArrayList<Integer>();
-		BufferedReader bufferedReader = null;
-		
-		try {
-			
-			bufferedReader = new BufferedReader(new FileReader(filePath));
-			String fileLine = bufferedReader.readLine();
-			
-			while (fileLine != null) {
-				
-				if (fileLine.trim().length() > 0) {
-					labelValues.add(Integer.parseInt(fileLine.trim().split("\\s")[0]));
-				}
-				fileLine = bufferedReader.readLine();
-			}
-			
-			bufferedReader.close();
-			
 		} catch (IOException e) {
 			throw e;
 		} catch (NumberFormatException e) {
 			throw e;
 		}
 		
-		return labelValues;
+		return new LabelsAndFeatures(labels, featureVectors);
 		
 	}
 

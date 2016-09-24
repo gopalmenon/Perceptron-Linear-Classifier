@@ -10,19 +10,21 @@ public class RunClassfier {
 
 	public static void main(String[] args) {
 		
-		PerceptronLinearClassifier classifier = new PerceptronLinearClassifier(true, 1, 1.0, TRAINING_DATA_FILE, TESTING_DATA_FILE);
-		classifier.train();
-		
 		try {
-			List<Integer> testingDataLabels = DataFileReader.getLabelValues(TESTING_DATA_FILE);
-			List<String> testingData = DataFileReader.getDataFileContents(TESTING_DATA_FILE);
+			
+			LabelsAndFeatures trainingLabelsAndFeatures = DataFileReader.getDataFileContents(TRAINING_DATA_FILE);
+			LabelsAndFeatures testingLabelsAndFeatures = DataFileReader.getDataFileContents(TESTING_DATA_FILE);	
+			
+			PerceptronLinearClassifier classifier = new PerceptronLinearClassifier(true, 1, 1.0, Math.max(trainingLabelsAndFeatures.getFeatureVectors().size(), testingLabelsAndFeatures.getFeatureVectors().size()));
+			classifier.train(trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors());
+			
 			
 			List<Integer> predictions = new ArrayList<Integer>();
-			for (String testingDataRow : testingData) {
-				predictions.add(Integer.valueOf(classifier.predict(testingDataRow)));
+			for (String testingDataVector : testingLabelsAndFeatures.getFeatureVectors()) {
+				predictions.add(Integer.valueOf(classifier.predict(testingDataVector)));
 			}
 			
-			ClassifierMetrics classifierMetrics = new ClassifierMetrics(testingDataLabels, predictions);
+			ClassifierMetrics classifierMetrics = new ClassifierMetrics(testingLabelsAndFeatures.getLabels(), predictions);
 			
 			System.out.println("Precision: " + classifierMetrics.getPrecision());
 			System.out.println("Recall: " + classifierMetrics.getRecall());

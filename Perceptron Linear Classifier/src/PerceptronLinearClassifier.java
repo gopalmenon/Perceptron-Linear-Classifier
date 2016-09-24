@@ -1,21 +1,16 @@
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 
 /**
  * Perceptron Linear Classifier 
  */
 public class PerceptronLinearClassifier {
 	
-	public static String WHITESPACE_REGEX = "\\s";
-	public static final String LABEL_DATA_SEPARATOR = ":";	
+	public static final String FEATURE_VALUE_SEPARATOR = ":";	
 	
 	private Random randomNumberGenerator;
 	private boolean useZeroWeights;
-	private List<String> rawTrainingData;
-	private List<String> rawTestingData;
 	private List<Double> weights;
 	private int numberOfEpochs;
 	private int numberOfFeatures;
@@ -28,23 +23,19 @@ public class PerceptronLinearClassifier {
 	 * @param trainingDataFileName
 	 * @param testingDataFileName
 	 */
-	public PerceptronLinearClassifier(boolean useZeroWeights, int numberOfEpochs, double learningRate, String trainingDataFileName, String testingDataFileName) {
+	public PerceptronLinearClassifier(boolean useZeroWeights, int numberOfEpochs, double learningRate, int numberOfFeatures) {
 				
 		this.randomNumberGenerator = new Random(System.currentTimeMillis());
 		
 		this.useZeroWeights = useZeroWeights;
 		
 		//Create a weights vector that includes a bias value
-		this.numberOfFeatures = loadRawData(trainingDataFileName, testingDataFileName);
+		this.numberOfFeatures = numberOfFeatures;
 		this.weights = new ArrayList<Double>(numberOfFeatures + 1);
 		for (int weightCounter = 0; weightCounter < numberOfFeatures + 1; ++weightCounter) {
 			if (this.useZeroWeights) {
-				//First term is the bias
-				if (weightCounter == 0) {
-					this.weights.add(Double.valueOf(this.randomNumberGenerator.nextDouble()));
-				} else {
-					this.weights.add(Double.valueOf(0.0));
-				}
+				//Bias will also be zero along with zero weights
+				this.weights.add(Double.valueOf(0.0));
 			} else {
 				this.weights.add(Double.valueOf(this.randomNumberGenerator.nextDouble()));
 			}
@@ -60,77 +51,33 @@ public class PerceptronLinearClassifier {
 	}
 	
 	/**
-	 * Load raw data and return the number of features
-	 * @param trainingDataFileName
-	 * @param testingDataFileName
-	 * @return
-	 */
-	private int loadRawData(String trainingDataFileName, String testingDataFileName) {
-		
-		int numberOfTrainingDataFeatures = Integer.MIN_VALUE, numberOfTestingDataFeatures = Integer.MIN_VALUE, currentLastLabelColumnNumber = 0;
-		try {
-
-			//Find number of features in training data
-			this.rawTrainingData = DataFileReader.getDataFileContents(trainingDataFileName);
-			for(String fileLine : this.rawTrainingData) {
-				String[] rawDataColumns = fileLine.split(WHITESPACE_REGEX);
-				String[] lastLabelAndFeature = rawDataColumns[rawDataColumns.length - 1].split(LABEL_DATA_SEPARATOR);
-				currentLastLabelColumnNumber = Integer.parseInt(lastLabelAndFeature[0]);
-				if (currentLastLabelColumnNumber > numberOfTrainingDataFeatures) {
-					numberOfTrainingDataFeatures = currentLastLabelColumnNumber;
-				}
-			}
-
-			//Find number of features in testing data
-			this.rawTestingData = DataFileReader.getDataFileContents(testingDataFileName);
-			for(String fileLine : this.rawTestingData) {
-				String[] rawDataColumns = fileLine.split(WHITESPACE_REGEX);
-				String[] lastLabelAndFeature = rawDataColumns[rawDataColumns.length - 1].split(LABEL_DATA_SEPARATOR);
-				currentLastLabelColumnNumber = Integer.parseInt(lastLabelAndFeature[0]);
-				if (currentLastLabelColumnNumber > numberOfTestingDataFeatures) {
-					numberOfTestingDataFeatures = currentLastLabelColumnNumber;
-				}
-			}
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(0);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			System.exit(0);
-		}
-		
-		return Math.max(numberOfTrainingDataFeatures, numberOfTestingDataFeatures);
-	}
-
-	
-	/**
 	 * Online training by considering training examples one at a time and updating weights and bias 
+	 * @param labels
+	 * @param featureVectors
 	 */
-	public void train() {
+	public void train(List<Integer> labels, List<String> featureVectors) {
 		
 		try {
+			
 			double dotProductOfWeightsAndFeatures = 0.0;
 			for (int epochCounter = 0; epochCounter < this.numberOfEpochs; ++epochCounter) {
 				
 				//Loop through the training data and fine tune the weights and bias
-				String trainingDataRow = null;
-				int label = 0;
-				for (int trainingDataRowCounter = 0; trainingDataRowCounter < this.rawTrainingData.size(); ++trainingDataRowCounter) {
+				for (int trainingDataRowCounter = 0; trainingDataRowCounter < featureVectors.size(); ++trainingDataRowCounter) {
 					
-					//Get label and feature values for training data row
-					trainingDataRow = this.rawTrainingData.get(trainingDataRowCounter);
-					String[] labelAndFeatures = trainingDataRow.split(WHITESPACE_REGEX);
-					label = Integer.parseInt(labelAndFeatures[0]);
-					List<Integer> featureValues = getFeatureValues(labelAndFeatures);
+					List<Integer> featureValues = getFeatureValues(featureVectors.get(trainingDataRowCounter));
 					
 					//Get the dot product of weights and features
 					dotProductOfWeightsAndFeatures = getDotProductOfWeightsWithInput(featureValues);
 					
 					//Update weights and bias if needed
-					if (weightUpdateRequired(dotProductOfWeightsAndFeatures, label)) {
-						updateWeightsAndBias(label, featureValues);
+					if (weightUpdateRequired(dotProductOfWeightsAndFeatures, labels.get(trainingDataRowCounter))) {
+						updateWeightsAndBias(labels.get(trainingDataRowCounter), featureValues);
 					}
+				}
+				
+				if (this.numberOfEpochs > 1) {
+					
 				}
 				
 			}
@@ -145,10 +92,9 @@ public class PerceptronLinearClassifier {
 	 * @param testingDataRow
 	 * @return the label that will be the sign of the dot product between the testing data and the input features 
 	 */
-	public int predict(String testingDataRow) {
+	public int predict(String featureVector) {
 		
-		String[] labelAndFeatures = testingDataRow.split(WHITESPACE_REGEX);
-		List<Integer> featureValues = getFeatureValues(labelAndFeatures);
+		List<Integer> featureValues = getFeatureValues(featureVector);
 		if (getDotProductOfWeightsWithInput(featureValues) >= 0.0) {
 			return 1;
 		} else {
@@ -158,39 +104,47 @@ public class PerceptronLinearClassifier {
 	}
 	
 	
-	private List<Integer> getFeatureValues(String[] labelAndFeatures) {
+	/**
+	 * @param featureVector
+	 * @return the feature vector as a list of integers
+	 */
+	private List<Integer> getFeatureValues(String featureVector) {
 		
 		List<Integer> featureValues = new ArrayList<Integer>();
-		int loopIndex = 0, currentFeatureNumber = 0, currentFeatureValue = 0, lastFeatureNumberAdded = 0;
-		String[] featureAndValue = null;
+		int currentFeatureNumber = 0, currentFeatureValue = 0, lastFeatureNumberAdded = 0;
+		String[] features = null, featureComponents = null;
 		
 		try {
-			
-			//Loop through the features in a data row
-			for (String rawFeatures : labelAndFeatures) {
 				
-				//The first element will be 1 so that it gets multiplied by the bias in the weight vector
-				if (loopIndex == 0) {
-					featureValues.add(Integer.valueOf(1));
-				} else {
-					featureAndValue = rawFeatures.split(LABEL_DATA_SEPARATOR);
-					currentFeatureNumber = Integer.parseInt(featureAndValue[0]);
-					currentFeatureValue = Integer.parseInt(featureAndValue[1]);
-					
-					//Fill in the features values with zeros till the next value in the data record
-					for (int featureCounter = lastFeatureNumberAdded + 1; featureCounter < currentFeatureNumber; ++featureCounter) {
-						featureValues.add(Integer.valueOf(0));
-					}
-					
-					lastFeatureNumberAdded = currentFeatureNumber;
-					
-					//Fill in the next value from the data file
-					featureValues.add(Integer.valueOf(currentFeatureValue));
-					
-				}
-				++loopIndex;
-			}
+			//The first element will be 1 so that it gets multiplied by the bias in the weight vector
+			featureValues.add(Integer.valueOf(1));
 			
+			//Split the feature vector into groups of feature numbers and feature values
+			features = featureVector.split(DataFileReader.WHITESPACE_REGEX);
+			
+			//Extract the numeric feature values
+			currentFeatureNumber = 0;
+			currentFeatureValue = 0;
+			lastFeatureNumberAdded = 0;
+			
+			for (String featureGroup : features) {
+				
+				featureComponents = featureGroup.split(FEATURE_VALUE_SEPARATOR);
+				currentFeatureNumber = Integer.parseInt(featureComponents[0]);
+				currentFeatureValue = Integer.parseInt(featureComponents[1]);
+				
+				//Fill in the features values with zeros till the next value in the data record
+				for (int featureCounter = lastFeatureNumberAdded + 1; featureCounter < currentFeatureNumber; ++featureCounter) {
+					featureValues.add(Integer.valueOf(0));
+				}
+				
+				lastFeatureNumberAdded = currentFeatureNumber;
+				
+				//Fill in the next value from the data file
+				featureValues.add(Integer.valueOf(currentFeatureValue));
+				
+			}
+				
 			//Add the rest of the features with zero values
 			for (int featureCounter = lastFeatureNumberAdded + 1; featureCounter <= this.numberOfFeatures; ++featureCounter) {
 				featureValues.add(Integer.valueOf(0));
@@ -200,7 +154,6 @@ public class PerceptronLinearClassifier {
 				System.err.println("Invalid feature value found.");
 				System.exit(0);
 		}
-			
 		
 		return featureValues;
 		
@@ -212,11 +165,11 @@ public class PerceptronLinearClassifier {
 	 */
 	private double getDotProductOfWeightsWithInput(List<Integer> featureValues) {
 		
-		int weightCounter = 0;
+		int featureCounter = 0;
 		double dotProduct = 0.0;
 		
 		for (Double weight : this.weights) {
-			dotProduct += weight.doubleValue() * featureValues.get(weightCounter++).intValue();
+			dotProduct += weight.doubleValue() * featureValues.get(featureCounter++).intValue();
 		}
 		
 		return dotProduct;
@@ -229,7 +182,7 @@ public class PerceptronLinearClassifier {
 	 */
 	protected boolean weightUpdateRequired(double dotProductOfWeightsAndFeatures, int labelValue) {
 		
-		if (dotProductOfWeightsAndFeatures * labelValue <= 0) {
+		if (dotProductOfWeightsAndFeatures * (double) labelValue <= 0.0) {
 			return true;
 		} else {
 			return false;
@@ -249,10 +202,10 @@ public class PerceptronLinearClassifier {
 			
 			if (weightsCounter == 0) {
 				//Update the bias
-				this.weights.set(weightsCounter, weight.doubleValue() + (double) (this.learningRate * label));
+				this.weights.set(weightsCounter, weight.doubleValue() +  (this.learningRate * (double) label));
 			} else {
 				//Update the weight
-				this.weights.set(weightsCounter, Double.valueOf(weight.doubleValue() + (double) (this.learningRate * label * featureValues.get(weightsCounter).intValue())));
+				this.weights.set(weightsCounter, Double.valueOf(weight.doubleValue() +  (this.learningRate * (double) label * featureValues.get(weightsCounter).doubleValue())));
 			}
 			++weightsCounter;
 		}
