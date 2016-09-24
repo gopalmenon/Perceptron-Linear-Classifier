@@ -20,7 +20,7 @@ If it is not true then it means that the hypothesis $f_r$ has made a mistake.
 
 \item[3.] [10 points] Consider the case when the label is $-1$ and the prediction is $+1$ because $x_1^2 + x_2^2 \leq r^2$. In order to correct this, we need to update $r$ to make it $x_1^2 + x_2^2 > r^2$ or $r = \floor*{\sqrt{x_1^2 + x_2^2 - 1}}$.\\
 
-Consider the case when the label is $+1$ and the prediction is $-1$ because $x_1^2 + x_2^2 > r^2$. In order to correct this, we need to update $r$ to make it $r = \ceil*{\sqrt{x_1^2 + x_2^2}}$.\\
+Consider the case when the label is $+1$ and the prediction is $-1$ because $x_1^2 + x_2^2 > r^2$. In order to correct this, we need to update $r$ to make it $r = \ceil*{\sqrt{x_1^2 + x_2^2 + 1}}$.\\
 
 In both cases above, we need to consider only the positive value of the square root.
 
@@ -32,12 +32,12 @@ In both cases above, we need to consider only the positive value of the square r
     \begin{algorithmic}[1]
       \Procedure{Mistake-Driven Learning Algorithm}{$x_1, x_2, y$}
 	\If {$x_1^2 + x_2^2 \leq r^2$}
-	  \If {label is $-1$}
+	  \If {y == $-1$}
 	    \State $r = \floor*{\sqrt{x_1^2 + x_2^2 - 1}}$
 	  \EndIf
 	\Else 
-	  \If {label is $+1$}
-	   \State $r = \ceil*{\sqrt{x_1^2 + x_2^2}}$
+	  \If {y == $+1$}
+	   \State $r = \ceil*{\sqrt{x_1^2 + x_2^2 + 1}}$
 	  \EndIf
 	\EndIf
       \EndProcedure
@@ -45,7 +45,9 @@ In both cases above, we need to consider only the positive value of the square r
   \end{algorithm}
 \end{minipage}\\
 
-Here the algorithm receives as input the values of $x_1$, $x_2$ and the label $y$. It then uses these values to update the value of $r$ that it maintains in its internal state.
+Here the algorithm receives as input the values of $x_1$, $x_2$ and the label $y$. It then uses these values to update the value of $r$ that it maintains in its internal state. In the algorithm above, $==$ represents the test for equals and $=$ represents an assignment.
+
+Since the correct function will use a value of $r$ between $1$ and $80$, the worst case scenario for learning the correct function will be the case where all the functions with the incorrect value of $r$ are first tried and the test data results in a wrong prediction in each such case. So the correct function will be the last one tried and will be found after making 79 (that is $\left | \mathcal{C} - 1 \right |$) mistakes. 
 
 \item[5.] ({\bf For 6350 students})[15 points total] We have seen the
   Halving algorithm in class. The Halving algorithm will maintain a
