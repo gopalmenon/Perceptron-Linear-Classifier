@@ -16,6 +16,7 @@ public class PerceptronLinearClassifier {
 	private int numberOfEpochs;
 	private int numberOfFeatures;
 	private double learningRate;
+	private int numberOfUpdates;
 	
 	/**
 	 * Constructor
@@ -56,10 +57,10 @@ public class PerceptronLinearClassifier {
 	 * @param labels
 	 * @param featureVectors
 	 */
-	public void train(List<Integer> labels, List<String> featureVectors) {
+	public int train(List<Integer> labels, List<String> featureVectors) {
 		
 		try {
-			
+			this.numberOfUpdates = 0;
 			double dotProductOfWeightsAndFeatures = 0.0;
 			for (int epochCounter = 0; epochCounter < this.numberOfEpochs; ++epochCounter) {
 				
@@ -73,6 +74,7 @@ public class PerceptronLinearClassifier {
 					
 					//Update weights and bias if needed
 					if (weightUpdateRequired(dotProductOfWeightsAndFeatures, labels.get(trainingDataRowCounter))) {
+						++this.numberOfUpdates;
 						updateWeightsAndBias(labels.get(trainingDataRowCounter), featureValues);
 					}
 				}
@@ -87,6 +89,7 @@ public class PerceptronLinearClassifier {
 			System.exit(0);
 		}
 		
+		return this.numberOfUpdates;
 	}
 	
 	/**
@@ -213,6 +216,11 @@ public class PerceptronLinearClassifier {
 		
 	}
 	
+	/**
+	 * Shuffle the labels and features together
+	 * @param labels
+	 * @param featureVectors
+	 */
 	private void shuffleData(List<Integer> labels, List<String> featureVectors) {
 		
 		//Generate a random number for the number of times to shuffle the data  
@@ -242,5 +250,12 @@ public class PerceptronLinearClassifier {
 			
 		}
 		
+	}
+	
+	/**
+	 * @return the weight vector
+	 */
+	public List<Double> getWeightVector() {
+		return this.weights;
 	}
 }
