@@ -27,7 +27,7 @@ public class PerceptronLinearClassifier {
 	 */
 	public PerceptronLinearClassifier(boolean useZeroWeights, int numberOfEpochs, double learningRate, int numberOfFeatures) {
 				
-		this.randomNumberGenerator = new Random(System.currentTimeMillis());
+		this.randomNumberGenerator = new Random(0);
 		
 		this.useZeroWeights = useZeroWeights;
 		

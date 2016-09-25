@@ -221,7 +221,7 @@ public class RunClassfier {
 	 */
 	private List<LabelsAndFeatures> getCrossValidationData(int numberOfSplits, List<Integer> labels, List<String> featureVectors) {
 		
-		Random randomNumberGenerator = new Random(System.currentTimeMillis());
+		Random randomNumberGenerator = new Random(0);
 		
 		List<LabelsAndFeatures> crossValidationData = new ArrayList<LabelsAndFeatures>(numberOfSplits);
 		
