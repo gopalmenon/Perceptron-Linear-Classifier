@@ -12,7 +12,7 @@ public class PerceptronLinearClassifier {
 	
 	private Random randomNumberGenerator;
 	private boolean useZeroWeights;
-	private List<Double> weights;
+	protected List<Double> weights;
 	private int numberOfEpochs;
 	private int numberOfFeatures;
 	private double learningRate;
@@ -75,7 +75,7 @@ public class PerceptronLinearClassifier {
 					//Update weights and bias if needed
 					if (weightUpdateRequired(dotProductOfWeightsAndFeatures, labels.get(trainingDataRowCounter))) {
 						++this.numberOfUpdates;
-						updateWeightsAndBias(labels.get(trainingDataRowCounter), featureValues);
+						updateWeightsAndBias(labels.get(trainingDataRowCounter), featureValues, dotProductOfWeightsAndFeatures);
 					}
 				}
 				
@@ -198,15 +198,16 @@ public class PerceptronLinearClassifier {
 	 * Update the weights and bias 
 	 * @param label
 	 * @param featureValues
+	 * @param dotProductOfWeightsAndFeatures
 	 */
-	private void updateWeightsAndBias(int label, List<Integer> featureValues) {
+	protected void updateWeightsAndBias(int label, List<Integer> featureValues, double dotProductOfWeightsAndFeatures) {
 		
 		int weightsCounter = 0;
 		for (Double weight : this.weights) {
 			
 			if (weightsCounter == 0) {
 				//Update the bias
-				this.weights.set(weightsCounter, weight.doubleValue() +  (this.learningRate * (double) label));
+				this.weights.set(weightsCounter, Double.valueOf(weight.doubleValue() +  (this.learningRate * (double) label)));
 			} else {
 				//Update the weight
 				this.weights.set(weightsCounter, Double.valueOf(weight.doubleValue() +  (this.learningRate * (double) label * featureValues.get(weightsCounter).doubleValue())));

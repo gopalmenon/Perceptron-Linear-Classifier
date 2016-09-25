@@ -6,6 +6,7 @@ import java.util.Random;
 
 public class RunClassfier {
 
+	public static final String TABLE_2_DATA_FILE = "data/table2";
 	public static final String TRAINING_DATA_FILE = "data/a5a.train";
 	public static final String TESTING_DATA_FILE = "data/a5a.test";
 	public static final String TRAINING_DATA_FILE_2D = "data/2dTrain.txt";
@@ -30,17 +31,20 @@ public class RunClassfier {
 		
 		try {
 			
+			LabelsAndFeatures table2LabelsAndFeatures = DataFileReader.getDataFileContents(TABLE_2_DATA_FILE);
 			LabelsAndFeatures trainingLabelsAndFeatures = DataFileReader.getDataFileContents(TRAINING_DATA_FILE);
 			LabelsAndFeatures testingLabelsAndFeatures = DataFileReader.getDataFileContents(TESTING_DATA_FILE);	
 			int numberOfTrainingDataFeatures = getNumberOfFeatures(trainingLabelsAndFeatures.getFeatureVectors()), numberOfTestingDataFeatures = getNumberOfFeatures(testingLabelsAndFeatures.getFeatureVectors());
 			int numberOfFeatures = Math.max(numberOfTrainingDataFeatures, numberOfTestingDataFeatures);
 			
-			runExperiment1(trainingLabelsAndFeatures, testingLabelsAndFeatures, numberOfFeatures);
+			runExperiment1(table2LabelsAndFeatures, getNumberOfFeatures(table2LabelsAndFeatures.getFeatureVectors()));
 			
 			runExperiment2(trainingLabelsAndFeatures, testingLabelsAndFeatures, numberOfFeatures);
 			
 			runExperiment3(trainingLabelsAndFeatures, testingLabelsAndFeatures, numberOfFeatures);
-		
+			
+			runExperiment4(trainingLabelsAndFeatures, testingLabelsAndFeatures, numberOfFeatures);
+			
 		} catch (IOException e) {
 			System.err.println("Error while trying to extract labels from test data.");
 			e.printStackTrace();
@@ -54,22 +58,12 @@ public class RunClassfier {
 	 * @param testingLabelsAndFeatures
 	 * @param numberOfFeatures
 	 */
-	private void runExperiment1(LabelsAndFeatures trainingLabelsAndFeatures, LabelsAndFeatures testingLabelsAndFeatures, int numberOfFeatures) {
+	private void runExperiment1(LabelsAndFeatures trainingLabelsAndFeatures, int numberOfFeatures) {
 		
 		//Experiment 1
 		PerceptronLinearClassifier classifier = new PerceptronLinearClassifier(true, 1, 1.0, numberOfFeatures);
 		System.out.println("3.3.1 Number of mistakes made is " + classifier.train(trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors()));
 		System.out.println("3.3.1 Weight vector is " + classifier.getWeightVector().toString());
-		
-		List<Integer> predictions = new ArrayList<Integer>();
-		for (String testingDataVector : testingLabelsAndFeatures.getFeatureVectors()) {
-			predictions.add(Integer.valueOf(classifier.predict(testingDataVector)));
-		}
-		
-		ClassifierMetrics classifierMetrics = new ClassifierMetrics(testingLabelsAndFeatures.getLabels(), predictions);
-		
-		System.out.println("3.3.1 Accuracy: " + classifierMetrics.getAccuracy());
-		
 
 	}
 	
@@ -98,7 +92,7 @@ public class RunClassfier {
 		
 		System.out.println("3.3.2 Perceptron Accuracy: " + classifierMetrics.getAccuracy());
 
-		LearningRateAndMyu learningRateAndMyu = getMarginPerceptronLearningRateAndMyuByCrossValidation(CROSS_VALIDATION_FOLDS, trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors(), numberOfFeatures, SINGLE_EPOCH);
+		LearningRateAndMyu learningRateAndMyu = getMarginPerceptronLearningRateAndMyuByCrossValidation(CROSS_VALIDATION_FOLDS, trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors(), numberOfFeatures, SINGLE_EPOCH, false);
 		System.out.println("\n3.3.2 Margin Perceptron Learning Rate used : " + learningRateAndMyu.getLearningRate() + ", and Myu used is " + learningRateAndMyu.getMyu());
 		MarginPerceptron marginClassifier = new MarginPerceptron(false, 1, learningRateAndMyu.getLearningRate(), numberOfFeatures, learningRateAndMyu.getMyu());
 		System.out.println("3.3.2 Number of Margin Perceptron mistakes made is " + marginClassifier.train(trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors()));
@@ -122,7 +116,7 @@ public class RunClassfier {
 	 */
 	private void runExperiment3(LabelsAndFeatures trainingLabelsAndFeatures, LabelsAndFeatures testingLabelsAndFeatures, int numberOfFeatures) {
 		
-		//Experiment 2
+		//Experiment 3
 		LearningRateAndMyu learningRateAndMyu = getPerceptronLearningRateByCrossValidation(CROSS_VALIDATION_FOLDS, trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors(), numberOfFeatures, MULTIPLE_EPOCHS);
 		System.out.println("\n3.3.3 Perceptron Learning Rate used : " + learningRateAndMyu.getLearningRate() + " for " + learningRateAndMyu.getEpochs() + " epochs.");
 
@@ -139,7 +133,7 @@ public class RunClassfier {
 		
 		System.out.println("3.3.3 Perceptron Accuracy: " + classifierMetrics.getAccuracy());
 
-		learningRateAndMyu = getMarginPerceptronLearningRateAndMyuByCrossValidation(CROSS_VALIDATION_FOLDS, trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors(), numberOfFeatures, MULTIPLE_EPOCHS);
+		learningRateAndMyu = getMarginPerceptronLearningRateAndMyuByCrossValidation(CROSS_VALIDATION_FOLDS, trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors(), numberOfFeatures, MULTIPLE_EPOCHS, false);
 		System.out.println("\n3.3.3 Margin Perceptron Learning Rate used : " + learningRateAndMyu.getLearningRate() + ", and Myu used is " + learningRateAndMyu.getMyu() + ", for " + learningRateAndMyu.getEpochs() + " epochs.");
 		MarginPerceptron marginClassifier = new MarginPerceptron(false, 1, learningRateAndMyu.getLearningRate(), numberOfFeatures, learningRateAndMyu.getMyu());
 		System.out.println("3.3.3 Number of Margin Perceptron mistakes made is " + marginClassifier.train(trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors()));
@@ -154,6 +148,47 @@ public class RunClassfier {
 		
 		System.out.println("3.3.3 Margin Perceptron Accuracy: " + classifierMetrics.getAccuracy());
 	}
+	
+	/**
+	 * Run Experiment 4
+	 * @param trainingLabelsAndFeatures
+	 * @param testingLabelsAndFeatures
+	 * @param numberOfFeatures
+	 */
+	private void runExperiment4(LabelsAndFeatures trainingLabelsAndFeatures, LabelsAndFeatures testingLabelsAndFeatures, int numberOfFeatures) {
+		
+		//Experiment 4
+		LearningRateAndMyu learningRateAndMyu = getMarginPerceptronLearningRateAndMyuByCrossValidation(CROSS_VALIDATION_FOLDS, trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors(), numberOfFeatures, SINGLE_EPOCH, true);
+		System.out.println("\n3.3.4 Aggressive Margin Perceptron Myu used is " + learningRateAndMyu.getMyu() + ", for " + learningRateAndMyu.getEpochs() + " epochs.");
+		AggressiveMarginPerceptron aggressiveMarginClassifier = new AggressiveMarginPerceptron(false, 1, learningRateAndMyu.getLearningRate(), numberOfFeatures, learningRateAndMyu.getMyu());
+		System.out.println("3.3.4 Number of Aggressive Margin Perceptron mistakes made is " + aggressiveMarginClassifier.train(trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors()));
+		System.out.println("3.3.4 Aggressive Margin Perceptron Weight vector is " + aggressiveMarginClassifier.getWeightVector().toString());
+		
+		List<Integer> predictions = new ArrayList<Integer>();
+		for (String testingDataVector : testingLabelsAndFeatures.getFeatureVectors()) {
+			predictions.add(Integer.valueOf(aggressiveMarginClassifier.predict(testingDataVector)));
+		}
+		
+		ClassifierMetrics classifierMetrics = new ClassifierMetrics(testingLabelsAndFeatures.getLabels(), predictions);
+		
+		System.out.println("3.3.4 Aggressive Margin Perceptron Accuracy: " + classifierMetrics.getAccuracy());
+
+		learningRateAndMyu = getMarginPerceptronLearningRateAndMyuByCrossValidation(CROSS_VALIDATION_FOLDS, trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors(), numberOfFeatures, SINGLE_EPOCH, true);
+		System.out.println("\n3.3.4 Aggressive Margin Perceptron Myu used is " + learningRateAndMyu.getMyu() + ", for " + learningRateAndMyu.getEpochs() + " epochs.");
+		aggressiveMarginClassifier = new AggressiveMarginPerceptron(false, 1, learningRateAndMyu.getLearningRate(), numberOfFeatures, learningRateAndMyu.getMyu());
+		System.out.println("3.3.4 Number of Aggressive Margin Perceptron mistakes made is " + aggressiveMarginClassifier.train(trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors()));
+		System.out.println("3.3.4 Aggressive Margin Perceptron Weight vector is " + aggressiveMarginClassifier.getWeightVector().toString());
+		
+		predictions = new ArrayList<Integer>();
+		for (String testingDataVector : testingLabelsAndFeatures.getFeatureVectors()) {
+			predictions.add(Integer.valueOf(aggressiveMarginClassifier.predict(testingDataVector)));
+		}
+		
+		classifierMetrics = new ClassifierMetrics(testingLabelsAndFeatures.getLabels(), predictions);
+		
+		System.out.println("3.3.4 Aggressive Margin Perceptron Accuracy: " + classifierMetrics.getAccuracy());
+	}
+
 	/**
 	 * @param featureVectors
 	 * @return the number of features in the feature vectors
@@ -328,7 +363,7 @@ public class RunClassfier {
 	 * @param numberOfFeatures
 	 * @return learning rate from cross validation
 	 */
-	private LearningRateAndMyu getMarginPerceptronLearningRateAndMyuByCrossValidation(int crossValidationFolds, List<Integer> labels, List<String> featureVectors, int numberOfFeatures, int[] epochValues) {
+	private LearningRateAndMyu getMarginPerceptronLearningRateAndMyuByCrossValidation(int crossValidationFolds, List<Integer> labels, List<String> featureVectors, int numberOfFeatures, int[] epochValues, boolean useAggressiveMarginPerceptron) {
 		
 		double currentAccuracy = 0.0, maximumAccuracy = Double.MIN_VALUE, bestLearningRate = 0.0, bestMyu = 0.0;
 		int bestNumberOfEpochs = 0;
@@ -345,8 +380,13 @@ public class RunClassfier {
 					//Run k-fold cross validation
 					for (int crossValidationCounter = 0; crossValidationCounter < crossValidationFolds; ++crossValidationCounter) {
 						
-						MarginPerceptron classifier = new MarginPerceptron(false, epochs, learningRate, numberOfFeatures, myu);
+						MarginPerceptron classifier = null;
 						
+						if (useAggressiveMarginPerceptron) {
+							classifier = new AggressiveMarginPerceptron(false, epochs, learningRate, numberOfFeatures, myu);
+						} else {
+							classifier = new MarginPerceptron(false, epochs, learningRate, numberOfFeatures, myu);
+						}
 						//Load training and testing data
 						List<Integer> trainingDataLabels = new ArrayList<Integer>();
 						List<String> trainingDataFeatures = new ArrayList<String>();

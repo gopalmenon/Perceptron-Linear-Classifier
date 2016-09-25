@@ -5,7 +5,7 @@
  */
 public class MarginPerceptron extends PerceptronLinearClassifier {
 
-	private double myu;
+	protected double myu;
 	
 	//Constructor
 	public MarginPerceptron(boolean useZeroWeights, int numberOfEpochs, double learningRate, int numberOfFeatures, double myu) {
