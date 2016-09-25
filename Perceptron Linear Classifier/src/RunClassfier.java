@@ -92,7 +92,7 @@ public class RunClassfier {
 		
 		System.out.println("3.3.2 Perceptron Accuracy: " + classifierMetrics.getAccuracy());
 
-		LearningRateAndMyu learningRateAndMyu = getMarginPerceptronLearningRateAndMyuByCrossValidation(CROSS_VALIDATION_FOLDS, trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors(), numberOfFeatures, SINGLE_EPOCH, false);
+		LearningRateAndMyu learningRateAndMyu = getMarginPerceptronLearningRateAndMyuByCrossValidation(CROSS_VALIDATION_FOLDS, trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors(), numberOfFeatures, SINGLE_EPOCH);
 		System.out.println("\n3.3.2 Margin Perceptron Learning Rate used : " + learningRateAndMyu.getLearningRate() + ", and Myu used is " + learningRateAndMyu.getMyu());
 		MarginPerceptron marginClassifier = new MarginPerceptron(false, 1, learningRateAndMyu.getLearningRate(), numberOfFeatures, learningRateAndMyu.getMyu());
 		System.out.println("3.3.2 Number of Margin Perceptron mistakes made is " + marginClassifier.train(trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors()));
@@ -120,7 +120,7 @@ public class RunClassfier {
 		LearningRateAndMyu learningRateAndMyu = getPerceptronLearningRateByCrossValidation(CROSS_VALIDATION_FOLDS, trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors(), numberOfFeatures, MULTIPLE_EPOCHS);
 		System.out.println("\n3.3.3 Perceptron Learning Rate used : " + learningRateAndMyu.getLearningRate() + " for " + learningRateAndMyu.getEpochs() + " epochs.");
 
-		PerceptronLinearClassifier classifier = new PerceptronLinearClassifier(false, 1, learningRateAndMyu.getLearningRate(), numberOfFeatures);
+		PerceptronLinearClassifier classifier = new PerceptronLinearClassifier(false, learningRateAndMyu.getEpochs(), learningRateAndMyu.getLearningRate(), numberOfFeatures);
 		System.out.println("3.3.3 Number of Perceptron mistakes made is " + classifier.train(trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors()));
 		System.out.println("3.3.3 Perceptron Weight vector is " + classifier.getWeightVector().toString());
 		
@@ -133,9 +133,9 @@ public class RunClassfier {
 		
 		System.out.println("3.3.3 Perceptron Accuracy: " + classifierMetrics.getAccuracy());
 
-		learningRateAndMyu = getMarginPerceptronLearningRateAndMyuByCrossValidation(CROSS_VALIDATION_FOLDS, trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors(), numberOfFeatures, MULTIPLE_EPOCHS, false);
+		learningRateAndMyu = getMarginPerceptronLearningRateAndMyuByCrossValidation(CROSS_VALIDATION_FOLDS, trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors(), numberOfFeatures, MULTIPLE_EPOCHS);
 		System.out.println("\n3.3.3 Margin Perceptron Learning Rate used : " + learningRateAndMyu.getLearningRate() + ", and Myu used is " + learningRateAndMyu.getMyu() + ", for " + learningRateAndMyu.getEpochs() + " epochs.");
-		MarginPerceptron marginClassifier = new MarginPerceptron(false, 1, learningRateAndMyu.getLearningRate(), numberOfFeatures, learningRateAndMyu.getMyu());
+		MarginPerceptron marginClassifier = new MarginPerceptron(false, learningRateAndMyu.getEpochs(), learningRateAndMyu.getLearningRate(), numberOfFeatures, learningRateAndMyu.getMyu());
 		System.out.println("3.3.3 Number of Margin Perceptron mistakes made is " + marginClassifier.train(trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors()));
 		System.out.println("3.3.3 Margin Perceptron Weight vector is " + marginClassifier.getWeightVector().toString());
 		
@@ -158,9 +158,9 @@ public class RunClassfier {
 	private void runExperiment4(LabelsAndFeatures trainingLabelsAndFeatures, LabelsAndFeatures testingLabelsAndFeatures, int numberOfFeatures) {
 		
 		//Experiment 4
-		LearningRateAndMyu learningRateAndMyu = getMarginPerceptronLearningRateAndMyuByCrossValidation(CROSS_VALIDATION_FOLDS, trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors(), numberOfFeatures, SINGLE_EPOCH, true);
+		LearningRateAndMyu learningRateAndMyu = getAggressiveMarginPerceptronLearningRateAndMyuByCrossValidation(CROSS_VALIDATION_FOLDS, trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors(), numberOfFeatures, SINGLE_EPOCH);
 		System.out.println("\n3.3.4 Aggressive Margin Perceptron Myu used is " + learningRateAndMyu.getMyu() + ", for " + learningRateAndMyu.getEpochs() + " epochs.");
-		AggressiveMarginPerceptron aggressiveMarginClassifier = new AggressiveMarginPerceptron(false, 1, learningRateAndMyu.getLearningRate(), numberOfFeatures, learningRateAndMyu.getMyu());
+		AggressiveMarginPerceptron aggressiveMarginClassifier = new AggressiveMarginPerceptron(false, learningRateAndMyu.getEpochs(), numberOfFeatures, learningRateAndMyu.getMyu());
 		System.out.println("3.3.4 Number of Aggressive Margin Perceptron mistakes made is " + aggressiveMarginClassifier.train(trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors()));
 		System.out.println("3.3.4 Aggressive Margin Perceptron Weight vector is " + aggressiveMarginClassifier.getWeightVector().toString());
 		
@@ -173,9 +173,9 @@ public class RunClassfier {
 		
 		System.out.println("3.3.4 Aggressive Margin Perceptron Accuracy: " + classifierMetrics.getAccuracy());
 
-		learningRateAndMyu = getMarginPerceptronLearningRateAndMyuByCrossValidation(CROSS_VALIDATION_FOLDS, trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors(), numberOfFeatures, SINGLE_EPOCH, true);
+		learningRateAndMyu = getAggressiveMarginPerceptronLearningRateAndMyuByCrossValidation(CROSS_VALIDATION_FOLDS, trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors(), numberOfFeatures, MULTIPLE_EPOCHS);
 		System.out.println("\n3.3.4 Aggressive Margin Perceptron Myu used is " + learningRateAndMyu.getMyu() + ", for " + learningRateAndMyu.getEpochs() + " epochs.");
-		aggressiveMarginClassifier = new AggressiveMarginPerceptron(false, 1, learningRateAndMyu.getLearningRate(), numberOfFeatures, learningRateAndMyu.getMyu());
+		aggressiveMarginClassifier = new AggressiveMarginPerceptron(false, learningRateAndMyu.getEpochs(), numberOfFeatures, learningRateAndMyu.getMyu());
 		System.out.println("3.3.4 Number of Aggressive Margin Perceptron mistakes made is " + aggressiveMarginClassifier.train(trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors()));
 		System.out.println("3.3.4 Aggressive Margin Perceptron Weight vector is " + aggressiveMarginClassifier.getWeightVector().toString());
 		
@@ -355,7 +355,6 @@ public class RunClassfier {
 		}
 	}
 	
-	
 	/**
 	 * @param crossValidationFolds
 	 * @param labels
@@ -363,7 +362,7 @@ public class RunClassfier {
 	 * @param numberOfFeatures
 	 * @return learning rate from cross validation
 	 */
-	private LearningRateAndMyu getMarginPerceptronLearningRateAndMyuByCrossValidation(int crossValidationFolds, List<Integer> labels, List<String> featureVectors, int numberOfFeatures, int[] epochValues, boolean useAggressiveMarginPerceptron) {
+	private LearningRateAndMyu getMarginPerceptronLearningRateAndMyuByCrossValidation(int crossValidationFolds, List<Integer> labels, List<String> featureVectors, int numberOfFeatures, int[] epochValues) {
 		
 		double currentAccuracy = 0.0, maximumAccuracy = Double.MIN_VALUE, bestLearningRate = 0.0, bestMyu = 0.0;
 		int bestNumberOfEpochs = 0;
@@ -380,13 +379,8 @@ public class RunClassfier {
 					//Run k-fold cross validation
 					for (int crossValidationCounter = 0; crossValidationCounter < crossValidationFolds; ++crossValidationCounter) {
 						
-						MarginPerceptron classifier = null;
+						MarginPerceptron classifier = new MarginPerceptron(false, epochs, learningRate, numberOfFeatures, myu);
 						
-						if (useAggressiveMarginPerceptron) {
-							classifier = new AggressiveMarginPerceptron(false, epochs, learningRate, numberOfFeatures, myu);
-						} else {
-							classifier = new MarginPerceptron(false, epochs, learningRate, numberOfFeatures, myu);
-						}
 						//Load training and testing data
 						List<Integer> trainingDataLabels = new ArrayList<Integer>();
 						List<String> trainingDataFeatures = new ArrayList<String>();
@@ -436,5 +430,76 @@ public class RunClassfier {
 		return this.new LearningRateAndMyu(bestLearningRate, bestMyu, bestNumberOfEpochs);
 
 	}
+	
+	/**
+	 * @param crossValidationFolds
+	 * @param labels
+	 * @param featureVectors
+	 * @param numberOfFeatures
+	 * @return learning rate from cross validation
+	 */
+	private LearningRateAndMyu getAggressiveMarginPerceptronLearningRateAndMyuByCrossValidation(int crossValidationFolds, List<Integer> labels, List<String> featureVectors, int numberOfFeatures, int[] epochValues) {
+		
+		double currentAccuracy = 0.0, maximumAccuracy = Double.MIN_VALUE, bestLearningRate = 0.0, bestMyu = 0.0;
+		int bestNumberOfEpochs = 0;
+		
+		List<LabelsAndFeatures> crossValidationData = getCrossValidationData(crossValidationFolds, labels, featureVectors);
+				
+		for (int epochs : epochValues) {
+			
+			for (double myu : TEST_MYU_VALUES) {
+	
+				//Run k-fold cross validation
+				for (int crossValidationCounter = 0; crossValidationCounter < crossValidationFolds; ++crossValidationCounter) {
+					
+					MarginPerceptron classifier = new AggressiveMarginPerceptron(false, epochs, numberOfFeatures, myu);
+					
+					//Load training and testing data
+					List<Integer> trainingDataLabels = new ArrayList<Integer>();
+					List<String> trainingDataFeatures = new ArrayList<String>();
+					
+					List<Integer> testingDataLabels = new ArrayList<Integer>();
+					List<String> testingDataFeatures = new ArrayList<String>();
+					
+					int splitCounter = 0;
+					for (LabelsAndFeatures labelsAndFeatures : crossValidationData) {
+						
+						if (splitCounter == crossValidationCounter) {
+							testingDataLabels.addAll(labelsAndFeatures.getLabels());
+							testingDataFeatures.addAll(labelsAndFeatures.getFeatureVectors());
+						} else {
+							trainingDataLabels.addAll(labelsAndFeatures.getLabels());
+							trainingDataFeatures.addAll(labelsAndFeatures.getFeatureVectors());
+						}
+						
+						++splitCounter;
+						
+					}
+				
+					//Train the classifier
+					classifier.train(trainingDataLabels, trainingDataFeatures);
+					
+					//Run predictions
+					List<Integer> predictions = new ArrayList<Integer>();
+					for (String testingDataVector : testingDataFeatures) {
+						predictions.add(Integer.valueOf(classifier.predict(testingDataVector)));
+					}
+					
+					//Get accuracy for this learning rate
+					currentAccuracy = new ClassifierMetrics(testingDataLabels, predictions).getAccuracy();
+					if (currentAccuracy > maximumAccuracy) {
+						maximumAccuracy = currentAccuracy;
+						bestLearningRate = 0.0;
+						bestMyu = myu;
+						bestNumberOfEpochs = epochs;
+					}
+				}
+					
+			}
+		}
+		
+		return this.new LearningRateAndMyu(bestLearningRate, bestMyu, bestNumberOfEpochs);
 
+	}
+	
 }

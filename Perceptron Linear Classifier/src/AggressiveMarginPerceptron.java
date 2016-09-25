@@ -8,9 +8,9 @@ import java.util.List;
 public class AggressiveMarginPerceptron extends MarginPerceptron {
 	
 	//Constructor
-	public AggressiveMarginPerceptron(boolean useZeroWeights, int numberOfEpochs, double learningRate, int numberOfFeatures, double myu) {
+	public AggressiveMarginPerceptron(boolean useZeroWeights, int numberOfEpochs, int numberOfFeatures, double myu) {
 		
-		super(useZeroWeights, numberOfEpochs, learningRate, numberOfFeatures, myu);
+		super(useZeroWeights, numberOfEpochs, 0.0, numberOfFeatures, myu);
 		
 	}
 	
