@@ -30,13 +30,4 @@ public class MarginPerceptron extends PerceptronLinearClassifier {
 		
 	}
 
-
-
-
-
-
-
-
-
-
 }
