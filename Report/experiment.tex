@@ -1,176 +1,32 @@
 \section{The Perceptron Algorithm and Its Variants}
 
 \subsection{The Task and Data}
-Imagine you have access to information about people such as age,
-gender and level of education. Now, you want to predict whether a
-person makes over \$50$K$ a year or not using these features.
-
-We will use Adult data set from the UCI Machine Learning
-repository\footnote{Look for information about the Adult data set at
-  \url{https://archive.ics.uci.edu/ml/datasets/Adult}} to study this.
-%
-As in homework 1, you may use Java, Python, Matlab, C/C++ for this
-assignment. If you want to use a different language, you must contact
-the instructor first. Any other language you may want to use
-\textbf{MUST} run on the CADE machines.
-
-The original Adult data set has 14 features, among which 6 are
-continuous and 8 are categorical. In order to make it easier to use,
-we will use a pre-processed version (and subset) of the original Adult
-data set, created by the makers of the popular LIBSVM tool. From the
-LIBSVM website: ``In this data set, the continuous features are
-discretized into quantiles, and each quantile is represented by a
-binary feature. Also, a categorical feature with $m$ categories is
-converted to $m$ binary features.''
-
-Use the training/test files called {\tt `a5a.train'} and {\tt
-  `a5a.test'}, available on the assignments page of the class
-website.\footnote{These are the same as {\tt a5a} and {\tt a5a.t}
-  available at
-  \url{http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary.html}}
-This data is in the LIBSVM format, where each row is a single training
-example. The format of the each row in the data is
-
-{\tt <label> <index1>:<value1> <index2>:<value2> ...}
-
-Here {\tt <label>} denotes the label for that example. The rest of the
-elements of the row is a sparse vector denoting the feature vector.
-For example, if the original feature vector is $[0, 0, 1, 2, 0, 3]$,
-this would be represented as {\tt 3:1 4:2 6:3}. That is, only the
-non-zero entries of the feature vector are stored.
 
 \subsection{Algorithms}
-
-You will implement two variants of the Perceptron algorithm. Note that
-each variant has different hyper-parameters, as described below. For
-this homework, you are not required to use cross-validation to find
-good hyperparameters. However, if you want, you may choose to do so.
-
-\begin{itemize}
-\item {\bf Perceptron}: This is the simple version of Perceptron as
-  described in the class. An update will be performed on an example
-  ($\bx$, $y$) if $y (\bw^T\bx + b) < 0$.
-  
-  {\bf Hyper-parameters}: The learning rate $r$
-
-  Two things bear additional explanation. 
-
-  First, note that in the formulation above, the bias term $b$ is
-  explicitly mentioned. This is because the features in the Adult data
-  do not include a bias feature. Of course, you could choose to add an
-  additional constant feature to each example and not have the
-  explicit extra $b$ during learning. (See the class lectures for more
-  information.) However, here, we will see the version of Perceptron
-  that explicitly has the bias term.
-
-  Second, if $\bw$ and $b$ are initialized with zero, then the
-  learning rate will have no effect. To see this, recall the
-  Perceptron update: 
-
-  \begin{itemize}
-  \item[] $\bw_{new} \leftarrow \bw_{old} + r y \bx$
-  \item[] $b_{new} \leftarrow b_{old} + r y$.
-  \end{itemize}
-
-  Now, if $\bw$ and $b$ are initialized with zeroes and a learning
-  rate $r$ is used, then we can show that the final parameters will be
-  equivalent to having a learning rate $1$. The final weight vector
-  and the bias term will be scaled by $r$ compared to the unit
-  learning rate case, which does not affect the sign of
-  $\bw^T\bx + b)$.
-
-  For this assignment, unless otherwise specified, you should
-  initialize the weight vector and the bias randomly and tune the
-  learning rate parameter. We recommend trying small values less than
-  one. (eg. 1, 0.1, 0.01, etc.)
-
-\item {\bf Margin Perceptron}: This variant of Perceptron will perform
-  an update on an example ($\bx$, $y$) if $y (\bw^T\bx + b) < \mu$,
-  where $\mu$ is an additional {\bf positive} hyper-parameter,
-  specified by the user. Note that because $\mu$ is positive, this
-  algorithm can update the weight vector even when the current weight
-  vector does not make a mistake on the current example.
-
-  {\bf Hyper-parameters}: Learning rate $r$ and the margin $\mu$. 
-
-  We recommend setting the value of $\mu$ between 0 and 5.0.
-  
-\end{itemize}
 
 \subsection{Experiments}
 
 \begin{enumerate}
-\item[1.] [Sanity check, 10 points] Run the simple Perceptron
-  algorithm on the data in the file {\tt table2} from the dataset (one
-  pass only) and report the weight vector that the algorithm returns.
-  How many mistakes does it make?
-
-  For this question alone, you should initialize the weights with
-  zero.
+\item[1.] The weight vector at the end of the run was $\left [0.0, 0.0, 1.0, 0.0, -1.0, 2.0 \right ] ^ T$. The number of mistakes made was $4$.
   
-\item[2.] [Online setting, 15 points] Run both the Perceptron algorithm
-  and the margin Perceptron on the Adult data for one pass. 
-  
-  Report the number of updates (or equivalently mistakes) made by each
-  algorithm and the accuracy of the final weight vector on both the
-  training and the test set.
+\item[2.] 6-fold cross validation was run for finding the hyper-parameters for the Perceptron and Margin Perceptron. 
 
-  You will require some playing with the algorithm hyper-parameters.
-  You will see that the hyper-parameters will make a difference and so
-  try out different values. Once again, we recommend that you use
-  cross-validation for choosing them, but you do not have to do so.
+For the Perceptron, a learning rate of $0.2$ was selected after cross-validation. $1382$ mistakes were made during the training process. The accuracy on the training set (calculated in all cases of this assignment by adding true positives and true negatives and dividing by total number of training samples) was $0.7989$, and was $0.7941$ on the testing set.
 
-\item[3.] [Using online algorithms in the batch setting, 20 points]
-  The third experiment is to evaluate the algorithms in a more
-  realistic setting, where the algorithms perform multiple passes over
-  the training data. This means that there is an {\em additional}
-  hyper-parameter: the number of epochs.
+For the Margin Perceptron, a learning rate of $0.1$ and a $\mu$ value of $5.0$ was selected after cross-validation. $2431$ mistakes were made during the training process. The accuracy on the training set was $0.8458$, and was $0.8413$ on the testing set.
 
-  Run the algorithms for three and five epochs and report the number
-  of updates made, and the accuracies of the final weight vectors on
-  the training and test data.
-  
-  It is often important to shuffle the training data before starting
-  each epoch. Report the results of the above experiments when you
-  shuffle the data at the start of each epoch. Briefly explain your
-  results.
+\item[3.] In this case, the data was shuffled for the case of multiple epochs before each subsequent epoch.
 
-\item[4.] ({\bf For 6350 Students}) [Aggressive Perceptron with
-  Margin, 10 points] Implement an extension of the margin Perceptron
-  which performs an {\em aggressive} update as follows:
+For the Perceptron, a learning rate of $0.6$ and $5$ epochs was selected after cross-validation. $6600$ mistakes were made during the training process. The accuracy on the training set was $0.7957$, and was $0.7984$ on the testing set.
 
-  If $y (\bw^T\bx + b) < \mu$, then update
-  \begin{itemize}
-  \item[(a)] $\bw_{new} \leftarrow \bw_{old} + \eta yx$
-  \item[(b)] $b_{new} \leftarrow b + \eta y$,
-  \end{itemize}
-  Unlike the standard Perceptron algorithm, here the learning rate
-  $\eta$ is given by
-  $$\eta = \frac{\mu - y(\bw^T\bx + b)}{\bx^T\bx + 1}$$
-  
-  As with the margin perceptron, there is an additional {\bf positive}
-  parameter $\mu$. 
+For the Margin Perceptron, a learning rate of $0.2$, a $\mu$ value of $3.0$ and $3$ epochs was selected after cross-validation. $5903$ mistakes were made during the training process. The accuracy on the training set was $0.8388$, and was $0.8343$ on the testing set.
 
-  We call this the aggressive update because the update can be derived
-  from the following optimization problem. When we see that
-  $y(\bw^T\bx +b) < \mu$, we try to find new values of $\bw$ and $b$
-  such that $y(\bw^T\bx +b) = \mu$ using 
+In both cases, the hyper-parameters selected when running over multiple epochs resulted in reduced accuracy over both training and testing sets. This is possibly because the samples are not linearly separated and the separating hyperplane results in classification errors. Additional updates to weights will not increase accuracy and the accuracy will tend to be more or less the same. The hyperplane may shift a little with each update, but does not converge beyond a given point.
 
-  \begin{eqnarray*}
-    \min_{\bw_{new}} & \frac{1}{2} ||\bw_{new} - \bw_{old}||^2 +\frac{1}{2}(b_{new} - b_{old})^2 \\
-      \mbox{s.t.} & y(\bw^T\bx +b) = \mu.
-  \end{eqnarray*}
+\item[4.] When the Aggressive Margin Perceptron was trained for $1$ epoch, cross-validation resulted in a $\mu$ of $1.0$. $2584$ mistakes were made during the training process. The accuracy on the training set was $0.7919$, and was $0.7904$ on the testing set.
 
-  That is, the goal is to find the smallest change in the weights so
-  that the current example is on the right side of the weight vector.
-  By substituting (a) and (b) from above into this optimization
-  problem, we will get a single variable optimization problem whose
-  solution gives us the $\eta$ defined above. You can think of this
-  algorithm as trying to tune the weight vector so that the current
-  example is correctly classified right after the update.
+When the number of epochs were also selected by cross-validation, the Aggressive Margin Perceptron used a $\mu$ of $2.0$ and $3$ epochs were selected. $7795$ mistakes were made during the training process. The accuracy on the training set was $0.8240$, and was $0.8269$ on the testing set. The data was shuffled in this case of multiple epochs. The shuffling was done before each subsequent epoch.
 
-  Repeat the batch experiments with the aggressive update. You should
-  report two sets of results (one with shuffling and one without).
 
 \end{enumerate}
 
