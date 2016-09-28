@@ -37,7 +37,7 @@ public class RunClassfier {
 			int numberOfTrainingDataFeatures = getNumberOfFeatures(trainingLabelsAndFeatures.getFeatureVectors()), numberOfTestingDataFeatures = getNumberOfFeatures(testingLabelsAndFeatures.getFeatureVectors());
 			int numberOfFeatures = Math.max(numberOfTrainingDataFeatures, numberOfTestingDataFeatures);
 			
-			runExperiment1(table2LabelsAndFeatures, getNumberOfFeatures(table2LabelsAndFeatures.getFeatureVectors()));
+			runExperiment1(table2LabelsAndFeatures, getNumberOfFeatures(getCleanedTable2LabelsAndFeatures(table2LabelsAndFeatures.getFeatureVectors())));
 			
 			runExperiment2(trainingLabelsAndFeatures, testingLabelsAndFeatures, numberOfFeatures);
 			
@@ -62,7 +62,7 @@ public class RunClassfier {
 		
 		//Experiment 1
 		PerceptronLinearClassifier classifier = new PerceptronLinearClassifier(true, 1, 1.0, numberOfFeatures);
-		System.out.println("3.3.1 Number of mistakes made is " + classifier.train(trainingLabelsAndFeatures.getLabels(), trainingLabelsAndFeatures.getFeatureVectors()));
+		System.out.println("3.3.1 Number of mistakes made is " + classifier.train(trainingLabelsAndFeatures.getLabels(), getCleanedTable2LabelsAndFeatures(trainingLabelsAndFeatures.getFeatureVectors())));
 		System.out.println("3.3.1 Weight vector is " + classifier.getWeightVector().toString());
 
 	}
@@ -554,6 +554,42 @@ public class RunClassfier {
 		
 		return this.new LearningRateAndMyu(bestLearningRate, bestMyu, bestNumberOfEpochs);
 
+	}
+	
+	/**
+	 * @param table2Features
+	 * @return cleaned up feature vectors 
+	 */
+	private List<String> getCleanedTable2LabelsAndFeatures(List<String> table2Features) {
+		
+		List<String> cleanedFeatureVectors = new ArrayList<String>(table2Features.size());
+		String[] columns = null, columnNumberAndValues = null;
+		
+		StringBuffer cleanedVector = null;
+		for (String featureVector : table2Features) {
+		
+			cleanedVector = new StringBuffer();
+			columns = featureVector.split(DataFileReader.WHITESPACE_REGEX);
+			for (String column : columns) {
+				
+				columnNumberAndValues = column.split(PerceptronLinearClassifier.FEATURE_VALUE_SEPARATOR);
+				try {
+					cleanedVector.append(Integer.parseInt(columnNumberAndValues[0]) + 1);
+					cleanedVector.append(PerceptronLinearClassifier.FEATURE_VALUE_SEPARATOR);
+					cleanedVector.append(columnNumberAndValues[1]);
+					cleanedVector.append(" ");
+				} catch (NumberFormatException e) {
+					System.exit(0);
+				}
+				
+			}
+			
+			cleanedFeatureVectors.add(cleanedVector.toString());
+		
+		}
+		
+		return cleanedFeatureVectors;
+		
 	}
 	
 }
