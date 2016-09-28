@@ -9,27 +9,242 @@
 \begin{enumerate}
 \item[1.] The weight vector at the end of the run was $\left [0.0, 0.0, 1.0, 0.0, -1.0, 2.0 \right ] ^ T$. The number of mistakes made was $4$.
   
-\item[2.] 6-fold cross validation was run for finding the hyper-parameters for the Perceptron and Margin Perceptron. 
+\item[2.] 6-fold cross validation was run for finding the hyper-parameters for the Perceptron and Margin Perceptron. Random weight values between 0 and 1 were assigned in this and all subsequent experiments.
 
-For the Perceptron, a learning rate of $0.2$ was selected after cross-validation. $1382$ mistakes were made during the training process. The accuracy on the training set (calculated in all cases of this assignment by adding true positives and true negatives and dividing by total number of training samples) was $0.7989$, and was $0.7941$ on the testing set.
+For the Perceptron, a learning rate of $0.4$ was selected after cross-validation. $1385$ mistakes were made during the training process. The accuracy on the training set (\textbf{calculated in all cases of this assignment by adding true positives and true negatives and dividing by total number of training samples}) was $0.8141$, and was $0.8115$ on the testing set.
 
-For the Margin Perceptron, a learning rate of $0.1$ and a $\mu$ value of $5.0$ was selected after cross-validation. $2431$ mistakes were made during the training process. The accuracy on the training set was $0.8458$, and was $0.8413$ on the testing set.
+For the Margin Perceptron, a learning rate of $0.1$ and a $\mu$ value of $4.0$ was selected after cross-validation. $2364$ mistakes were made during the training process. The accuracy on the training set was $0.8435$, and was $0.8398$ on the testing set.
+
+Section 4 has the cross validation details for the hyper-parameters that were evaluated.
 
 \item[3.] In this case, the data was shuffled for the case of multiple epochs before each subsequent epoch.
 
-For the Perceptron, a learning rate of $0.6$ and $5$ epochs was selected after cross-validation. $6600$ mistakes were made during the training process. The accuracy on the training set was $0.7957$, and was $0.7984$ on the testing set.
+For the Perceptron, a learning rate of $0.8$ and $3$ epochs was selected after cross-validation. $4025$ mistakes were made during the training process. The accuracy on the training set was $0.8226$, and was $0.8233$ on the testing set.
 
-For the Margin Perceptron, a learning rate of $0.2$, a $\mu$ value of $3.0$ and $3$ epochs was selected after cross-validation. $5903$ mistakes were made during the training process. The accuracy on the training set was $0.8388$, and was $0.8343$ on the testing set.
+For the Margin Perceptron, a learning rate of $0.4$, a $\mu$ value of $5.0$ and $3$ epochs was selected after cross-validation. $5847$ mistakes were made during the training process. The accuracy on the training set was $0.8411$, and was $0.8391$ on the testing set.
 
-In both cases, the hyper-parameters selected when running over multiple epochs resulted in reduced accuracy over both training and testing sets. This is possible because the samples are not linearly separated and the separating hyperplane results in classification errors. Additional updates to weights will not increase accuracy and the accuracy will tend to be more or less the same. The hyperplane may shift a little with each update, but does not converge beyond a given point.
+Section 5 has the cross validation details for the hyper-parameters that were evaluated.
 
-\item[4.] When the Aggressive Margin Perceptron was trained for $1$ epoch, cross-validation resulted in a $\mu$ of $1.0$. $2584$ mistakes were made during the training process. The accuracy on the training set was $0.7919$, and was $0.7904$ on the testing set.
+In the case of the Perceptron, cross-validation resulted in increased accuracy. For the case of Margin Perceptron, accuracy after cross-validation slightly decreased. Typically cross-validation should result in improved accuracy. However, it is possible that when the samples are not linearly separated, the accuracy just keeps shifting around the maximum possible value and never converges.
 
-When the number of epochs were also selected by cross-validation, the Aggressive Margin Perceptron used a $\mu$ of $2.0$ and $3$ epochs were selected. $7795$ mistakes were made during the training process. The accuracy on the training set was $0.8240$, and was $0.8269$ on the testing set. The data was shuffled in this case of multiple epochs. The shuffling was done before each subsequent epoch.
+\item[4.] When the Aggressive Margin Perceptron was trained with no shuffling of data (for 1 epoch), cross-validation resulted in a $\mu$ of $5.0$. $2702$ mistakes were made during the training process. The accuracy on the training set was $0.8101$, and was $0.8130$ on the testing set.
 
+When the training was done with shuffling of data before each subsequent epoch (run for 3 and 5 epochs), the number of epochs were also selected by cross-validation. The Aggressive Margin Perceptron used a $\mu$ of $1.0$ and $5$ epochs were selected. $12995$ mistakes were made during the training process. The accuracy on the training set was $0.7137$, and was $0.7007$ on the testing set. 
+
+Section 6 has the cross validation details for the hyper-parameters that were evaluated.
 
 \end{enumerate}
 
+\section{Perceptron and Margin Perceptron Cross Validation Results}
+\begin{Verbatim}[fontsize=\small]
+Perceptron Epochs 1, learning rate 0.1 and average accuracy 0.8151
+Perceptron Epochs 1, learning rate 0.2 and average accuracy 0.822
+Perceptron Epochs 1, learning rate 0.3 and average accuracy 0.8195
+Perceptron Epochs 1, learning rate 0.4 and average accuracy 0.825
+Perceptron Epochs 1, learning rate 0.5 and average accuracy 0.822
+Perceptron Epochs 1, learning rate 0.6 and average accuracy 0.8119
+Perceptron Epochs 1, learning rate 0.7 and average accuracy 0.8212
+Perceptron Epochs 1, learning rate 0.8 and average accuracy 0.8208
+Perceptron Epochs 1, learning rate 0.9 and average accuracy 0.8198
+Perceptron Epochs 1, learning rate 1.0 and average accuracy 0.8175
+
+Margin Perceptron Epochs 1, myu 1.0, learning rate 0.1 and average accuracy 0.8153
+Margin Perceptron Epochs 1, myu 1.0, learning rate 0.2 and average accuracy 0.8222
+Margin Perceptron Epochs 1, myu 1.0, learning rate 0.3 and average accuracy 0.819
+Margin Perceptron Epochs 1, myu 1.0, learning rate 0.4 and average accuracy 0.8261
+Margin Perceptron Epochs 1, myu 1.0, learning rate 0.5 and average accuracy 0.8245
+Margin Perceptron Epochs 1, myu 1.0, learning rate 0.6 and average accuracy 0.8153
+Margin Perceptron Epochs 1, myu 1.0, learning rate 0.7 and average accuracy 0.8232
+Margin Perceptron Epochs 1, myu 1.0, learning rate 0.8 and average accuracy 0.8324
+Margin Perceptron Epochs 1, myu 1.0, learning rate 0.9 and average accuracy 0.8264
+Margin Perceptron Epochs 1, myu 1.0, learning rate 1.0 and average accuracy 0.8198
+Margin Perceptron Epochs 1, myu 2.0, learning rate 0.1 and average accuracy 0.8164
+Margin Perceptron Epochs 1, myu 2.0, learning rate 0.2 and average accuracy 0.8114
+Margin Perceptron Epochs 1, myu 2.0, learning rate 0.3 and average accuracy 0.8237
+Margin Perceptron Epochs 1, myu 2.0, learning rate 0.4 and average accuracy 0.8198
+Margin Perceptron Epochs 1, myu 2.0, learning rate 0.5 and average accuracy 0.8225
+Margin Perceptron Epochs 1, myu 2.0, learning rate 0.6 and average accuracy 0.8228
+Margin Perceptron Epochs 1, myu 2.0, learning rate 0.7 and average accuracy 0.824
+Margin Perceptron Epochs 1, myu 2.0, learning rate 0.8 and average accuracy 0.8181
+Margin Perceptron Epochs 1, myu 2.0, learning rate 0.9 and average accuracy 0.8232
+Margin Perceptron Epochs 1, myu 2.0, learning rate 1.0 and average accuracy 0.8197
+Margin Perceptron Epochs 1, myu 3.0, learning rate 0.1 and average accuracy 0.829
+Margin Perceptron Epochs 1, myu 3.0, learning rate 0.2 and average accuracy 0.8128
+Margin Perceptron Epochs 1, myu 3.0, learning rate 0.3 and average accuracy 0.8112
+Margin Perceptron Epochs 1, myu 3.0, learning rate 0.4 and average accuracy 0.8184
+Margin Perceptron Epochs 1, myu 3.0, learning rate 0.5 and average accuracy 0.8265
+Margin Perceptron Epochs 1, myu 3.0, learning rate 0.6 and average accuracy 0.8247
+Margin Perceptron Epochs 1, myu 3.0, learning rate 0.7 and average accuracy 0.8231
+Margin Perceptron Epochs 1, myu 3.0, learning rate 0.8 and average accuracy 0.8279
+Margin Perceptron Epochs 1, myu 3.0, learning rate 0.9 and average accuracy 0.8208
+Margin Perceptron Epochs 1, myu 3.0, learning rate 1.0 and average accuracy 0.8232
+Margin Perceptron Epochs 1, myu 4.0, learning rate 0.1 and average accuracy 0.8398
+Margin Perceptron Epochs 1, myu 4.0, learning rate 0.2 and average accuracy 0.8243
+Margin Perceptron Epochs 1, myu 4.0, learning rate 0.3 and average accuracy 0.8131
+Margin Perceptron Epochs 1, myu 4.0, learning rate 0.4 and average accuracy 0.82
+Margin Perceptron Epochs 1, myu 4.0, learning rate 0.5 and average accuracy 0.8181
+Margin Perceptron Epochs 1, myu 4.0, learning rate 0.6 and average accuracy 0.8179
+Margin Perceptron Epochs 1, myu 4.0, learning rate 0.7 and average accuracy 0.8256
+Margin Perceptron Epochs 1, myu 4.0, learning rate 0.8 and average accuracy 0.8228
+Margin Perceptron Epochs 1, myu 4.0, learning rate 0.9 and average accuracy 0.8271
+Margin Perceptron Epochs 1, myu 4.0, learning rate 1.0 and average accuracy 0.8228
+Margin Perceptron Epochs 1, myu 5.0, learning rate 0.1 and average accuracy 0.8396
+Margin Perceptron Epochs 1, myu 5.0, learning rate 0.2 and average accuracy 0.8243
+Margin Perceptron Epochs 1, myu 5.0, learning rate 0.3 and average accuracy 0.8072
+Margin Perceptron Epochs 1, myu 5.0, learning rate 0.4 and average accuracy 0.81
+Margin Perceptron Epochs 1, myu 5.0, learning rate 0.5 and average accuracy 0.8151
+Margin Perceptron Epochs 1, myu 5.0, learning rate 0.6 and average accuracy 0.8126
+Margin Perceptron Epochs 1, myu 5.0, learning rate 0.7 and average accuracy 0.8137
+Margin Perceptron Epochs 1, myu 5.0, learning rate 0.8 and average accuracy 0.8178
+Margin Perceptron Epochs 1, myu 5.0, learning rate 0.9 and average accuracy 0.8201
+Margin Perceptron Epochs 1, myu 5.0, learning rate 1.0 and average accuracy 0.8215
+\end{Verbatim}
+
+\section{Perceptron and Margin Perceptron with Epochs Cross Validation Results}
+\begin{Verbatim}[fontsize=\small]
+
+Perceptron Epochs 3, learning rate 0.1 and average accuracy 0.8164
+Perceptron Epochs 3, learning rate 0.2 and average accuracy 0.8117
+Perceptron Epochs 3, learning rate 0.3 and average accuracy 0.812
+Perceptron Epochs 3, learning rate 0.4 and average accuracy 0.8169
+Perceptron Epochs 3, learning rate 0.5 and average accuracy 0.8106
+Perceptron Epochs 3, learning rate 0.6 and average accuracy 0.8186
+Perceptron Epochs 3, learning rate 0.7 and average accuracy 0.8142
+Perceptron Epochs 3, learning rate 0.8 and average accuracy 0.8187
+Perceptron Epochs 3, learning rate 0.9 and average accuracy 0.8103
+Perceptron Epochs 3, learning rate 1.0 and average accuracy 0.8033
+Perceptron Epochs 5, learning rate 0.1 and average accuracy 0.7888
+Perceptron Epochs 5, learning rate 0.2 and average accuracy 0.803
+Perceptron Epochs 5, learning rate 0.3 and average accuracy 0.801
+Perceptron Epochs 5, learning rate 0.4 and average accuracy 0.7996
+Perceptron Epochs 5, learning rate 0.5 and average accuracy 0.7838
+Perceptron Epochs 5, learning rate 0.6 and average accuracy 0.801
+Perceptron Epochs 5, learning rate 0.7 and average accuracy 0.798
+Perceptron Epochs 5, learning rate 0.8 and average accuracy 0.7762
+Perceptron Epochs 5, learning rate 0.9 and average accuracy 0.7985
+Perceptron Epochs 5, learning rate 1.0 and average accuracy 0.8014
+
+Margin Perceptron Epochs 3, myu 1.0, learning rate 0.1 and average accuracy 0.8373
+Margin Perceptron Epochs 3, myu 1.0, learning rate 0.2 and average accuracy 0.8307
+Margin Perceptron Epochs 3, myu 1.0, learning rate 0.3 and average accuracy 0.8317
+Margin Perceptron Epochs 3, myu 1.0, learning rate 0.4 and average accuracy 0.8296
+Margin Perceptron Epochs 3, myu 1.0, learning rate 0.5 and average accuracy 0.8228
+Margin Perceptron Epochs 3, myu 1.0, learning rate 0.6 and average accuracy 0.8212
+Margin Perceptron Epochs 3, myu 1.0, learning rate 0.7 and average accuracy 0.82
+Margin Perceptron Epochs 3, myu 1.0, learning rate 0.8 and average accuracy 0.8268
+Margin Perceptron Epochs 3, myu 1.0, learning rate 0.9 and average accuracy 0.82
+Margin Perceptron Epochs 3, myu 1.0, learning rate 1.0 and average accuracy 0.8172
+Margin Perceptron Epochs 3, myu 2.0, learning rate 0.1 and average accuracy 0.8356
+Margin Perceptron Epochs 3, myu 2.0, learning rate 0.2 and average accuracy 0.839
+Margin Perceptron Epochs 3, myu 2.0, learning rate 0.3 and average accuracy 0.8284
+Margin Perceptron Epochs 3, myu 2.0, learning rate 0.4 and average accuracy 0.8306
+Margin Perceptron Epochs 3, myu 2.0, learning rate 0.5 and average accuracy 0.8318
+Margin Perceptron Epochs 3, myu 2.0, learning rate 0.6 and average accuracy 0.8204
+Margin Perceptron Epochs 3, myu 2.0, learning rate 0.7 and average accuracy 0.83
+Margin Perceptron Epochs 3, myu 2.0, learning rate 0.8 and average accuracy 0.8253
+Margin Perceptron Epochs 3, myu 2.0, learning rate 0.9 and average accuracy 0.8156
+Margin Perceptron Epochs 3, myu 2.0, learning rate 1.0 and average accuracy 0.8215
+Margin Perceptron Epochs 3, myu 3.0, learning rate 0.1 and average accuracy 0.8359
+Margin Perceptron Epochs 3, myu 3.0, learning rate 0.2 and average accuracy 0.8402
+Margin Perceptron Epochs 3, myu 3.0, learning rate 0.3 and average accuracy 0.8298
+Margin Perceptron Epochs 3, myu 3.0, learning rate 0.4 and average accuracy 0.8356
+Margin Perceptron Epochs 3, myu 3.0, learning rate 0.5 and average accuracy 0.8354
+Margin Perceptron Epochs 3, myu 3.0, learning rate 0.6 and average accuracy 0.8331
+Margin Perceptron Epochs 3, myu 3.0, learning rate 0.7 and average accuracy 0.8317
+Margin Perceptron Epochs 3, myu 3.0, learning rate 0.8 and average accuracy 0.827
+Margin Perceptron Epochs 3, myu 3.0, learning rate 0.9 and average accuracy 0.8236
+Margin Perceptron Epochs 3, myu 3.0, learning rate 1.0 and average accuracy 0.8204
+Margin Perceptron Epochs 3, myu 4.0, learning rate 0.1 and average accuracy 0.8387
+Margin Perceptron Epochs 3, myu 4.0, learning rate 0.2 and average accuracy 0.8395
+Margin Perceptron Epochs 3, myu 4.0, learning rate 0.3 and average accuracy 0.8368
+Margin Perceptron Epochs 3, myu 4.0, learning rate 0.4 and average accuracy 0.8339
+Margin Perceptron Epochs 3, myu 4.0, learning rate 0.5 and average accuracy 0.8289
+Margin Perceptron Epochs 3, myu 4.0, learning rate 0.6 and average accuracy 0.8307
+Margin Perceptron Epochs 3, myu 4.0, learning rate 0.7 and average accuracy 0.8254
+Margin Perceptron Epochs 3, myu 4.0, learning rate 0.8 and average accuracy 0.8321
+Margin Perceptron Epochs 3, myu 4.0, learning rate 0.9 and average accuracy 0.8276
+Margin Perceptron Epochs 3, myu 4.0, learning rate 1.0 and average accuracy 0.824
+Margin Perceptron Epochs 3, myu 5.0, learning rate 0.1 and average accuracy 0.8374
+Margin Perceptron Epochs 3, myu 5.0, learning rate 0.2 and average accuracy 0.8395
+Margin Perceptron Epochs 3, myu 5.0, learning rate 0.3 and average accuracy 0.8362
+Margin Perceptron Epochs 3, myu 5.0, learning rate 0.4 and average accuracy 0.8406
+Margin Perceptron Epochs 3, myu 5.0, learning rate 0.5 and average accuracy 0.8289
+Margin Perceptron Epochs 3, myu 5.0, learning rate 0.6 and average accuracy 0.8332
+Margin Perceptron Epochs 3, myu 5.0, learning rate 0.7 and average accuracy 0.831
+Margin Perceptron Epochs 3, myu 5.0, learning rate 0.8 and average accuracy 0.832
+Margin Perceptron Epochs 3, myu 5.0, learning rate 0.9 and average accuracy 0.8343
+Margin Perceptron Epochs 3, myu 5.0, learning rate 1.0 and average accuracy 0.8354
+Margin Perceptron Epochs 5, myu 1.0, learning rate 0.1 and average accuracy 0.8117
+Margin Perceptron Epochs 5, myu 1.0, learning rate 0.2 and average accuracy 0.8108
+Margin Perceptron Epochs 5, myu 1.0, learning rate 0.3 and average accuracy 0.7854
+Margin Perceptron Epochs 5, myu 1.0, learning rate 0.4 and average accuracy 0.7801
+Margin Perceptron Epochs 5, myu 1.0, learning rate 0.5 and average accuracy 0.807
+Margin Perceptron Epochs 5, myu 1.0, learning rate 0.6 and average accuracy 0.7861
+Margin Perceptron Epochs 5, myu 1.0, learning rate 0.7 and average accuracy 0.7964
+Margin Perceptron Epochs 5, myu 1.0, learning rate 0.8 and average accuracy 0.7952
+Margin Perceptron Epochs 5, myu 1.0, learning rate 0.9 and average accuracy 0.7849
+Margin Perceptron Epochs 5, myu 1.0, learning rate 1.0 and average accuracy 0.7712
+Margin Perceptron Epochs 5, myu 2.0, learning rate 0.1 and average accuracy 0.8321
+Margin Perceptron Epochs 5, myu 2.0, learning rate 0.2 and average accuracy 0.8192
+Margin Perceptron Epochs 5, myu 2.0, learning rate 0.3 and average accuracy 0.8164
+Margin Perceptron Epochs 5, myu 2.0, learning rate 0.4 and average accuracy 0.8091
+Margin Perceptron Epochs 5, myu 2.0, learning rate 0.5 and average accuracy 0.8034
+Margin Perceptron Epochs 5, myu 2.0, learning rate 0.6 and average accuracy 0.805
+Margin Perceptron Epochs 5, myu 2.0, learning rate 0.7 and average accuracy 0.8153
+Margin Perceptron Epochs 5, myu 2.0, learning rate 0.8 and average accuracy 0.7977
+Margin Perceptron Epochs 5, myu 2.0, learning rate 0.9 and average accuracy 0.7961
+Margin Perceptron Epochs 5, myu 2.0, learning rate 1.0 and average accuracy 0.8038
+Margin Perceptron Epochs 5, myu 3.0, learning rate 0.1 and average accuracy 0.8301
+Margin Perceptron Epochs 5, myu 3.0, learning rate 0.2 and average accuracy 0.8284
+Margin Perceptron Epochs 5, myu 3.0, learning rate 0.3 and average accuracy 0.8179
+Margin Perceptron Epochs 5, myu 3.0, learning rate 0.4 and average accuracy 0.8139
+Margin Perceptron Epochs 5, myu 3.0, learning rate 0.5 and average accuracy 0.812
+Margin Perceptron Epochs 5, myu 3.0, learning rate 0.6 and average accuracy 0.8133
+Margin Perceptron Epochs 5, myu 3.0, learning rate 0.7 and average accuracy 0.798
+Margin Perceptron Epochs 5, myu 3.0, learning rate 0.8 and average accuracy 0.8081
+Margin Perceptron Epochs 5, myu 3.0, learning rate 0.9 and average accuracy 0.793
+Margin Perceptron Epochs 5, myu 3.0, learning rate 1.0 and average accuracy 0.8067
+Margin Perceptron Epochs 5, myu 4.0, learning rate 0.1 and average accuracy 0.8304
+Margin Perceptron Epochs 5, myu 4.0, learning rate 0.2 and average accuracy 0.8271
+Margin Perceptron Epochs 5, myu 4.0, learning rate 0.3 and average accuracy 0.8257
+Margin Perceptron Epochs 5, myu 4.0, learning rate 0.4 and average accuracy 0.8236
+Margin Perceptron Epochs 5, myu 4.0, learning rate 0.5 and average accuracy 0.8187
+Margin Perceptron Epochs 5, myu 4.0, learning rate 0.6 and average accuracy 0.8133
+Margin Perceptron Epochs 5, myu 4.0, learning rate 0.7 and average accuracy 0.8042
+Margin Perceptron Epochs 5, myu 4.0, learning rate 0.8 and average accuracy 0.8162
+Margin Perceptron Epochs 5, myu 4.0, learning rate 0.9 and average accuracy 0.8155
+Margin Perceptron Epochs 5, myu 4.0, learning rate 1.0 and average accuracy 0.8067
+Margin Perceptron Epochs 5, myu 5.0, learning rate 0.1 and average accuracy 0.8321
+Margin Perceptron Epochs 5, myu 5.0, learning rate 0.2 and average accuracy 0.8307
+Margin Perceptron Epochs 5, myu 5.0, learning rate 0.3 and average accuracy 0.8271
+Margin Perceptron Epochs 5, myu 5.0, learning rate 0.4 and average accuracy 0.8257
+Margin Perceptron Epochs 5, myu 5.0, learning rate 0.5 and average accuracy 0.8222
+Margin Perceptron Epochs 5, myu 5.0, learning rate 0.6 and average accuracy 0.82
+Margin Perceptron Epochs 5, myu 5.0, learning rate 0.7 and average accuracy 0.8186
+Margin Perceptron Epochs 5, myu 5.0, learning rate 0.8 and average accuracy 0.8092
+Margin Perceptron Epochs 5, myu 5.0, learning rate 0.9 and average accuracy 0.8075
+Margin Perceptron Epochs 5, myu 5.0, learning rate 1.0 and average accuracy 0.8108
+\end{Verbatim}
+
+\section{Aggressive Margin Perceptron Cross Validation Results}
+\begin{Verbatim}[fontsize=\small]
+Aggressive Margin Perceptron Epochs 1, myu 1.0 and average accuracy 0.7879
+Aggressive Margin Perceptron Epochs 1, myu 2.0 and average accuracy 0.7894
+Aggressive Margin Perceptron Epochs 1, myu 3.0 and average accuracy 0.7891
+Aggressive Margin Perceptron Epochs 1, myu 4.0 and average accuracy 0.7893
+Aggressive Margin Perceptron Epochs 1, myu 5.0 and average accuracy 0.7896
+
+Aggressive Margin Perceptron Epochs 3, myu 1.0 and average accuracy 0.8111
+Aggressive Margin Perceptron Epochs 3, myu 2.0 and average accuracy 0.81
+Aggressive Margin Perceptron Epochs 3, myu 3.0 and average accuracy 0.8106
+Aggressive Margin Perceptron Epochs 3, myu 4.0 and average accuracy 0.81
+Aggressive Margin Perceptron Epochs 3, myu 5.0 and average accuracy 0.8098
+Aggressive Margin Perceptron Epochs 5, myu 1.0 and average accuracy 0.8156
+Aggressive Margin Perceptron Epochs 5, myu 2.0 and average accuracy 0.8147
+Aggressive Margin Perceptron Epochs 5, myu 3.0 and average accuracy 0.8145
+Aggressive Margin Perceptron Epochs 5, myu 4.0 and average accuracy 0.8141
+Aggressive Margin Perceptron Epochs 5, myu 5.0 and average accuracy 0.8142
+\end{Verbatim}
 
 %%% Local Variables:
 %%% mode: latex
