@@ -1,4 +1,6 @@
 import java.io.IOException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -324,8 +326,11 @@ public class RunClassfier {
 		
 		double currentAccuracy = 0.0, maximumAccuracy = Double.MIN_VALUE, bestLearningRate = 0.0;
 		int bestNumberOfEpochs = 0;
-		
+		DecimalFormat df = new DecimalFormat("#.####");
+		df.setRoundingMode(RoundingMode.CEILING);
 		List<LabelsAndFeatures> crossValidationData = getCrossValidationData(crossValidationFolds, labels, featureVectors);
+		
+		System.out.println("\nCross Validation Steps:");
 		
 		for (int epochs : epochValues) {
 
@@ -333,6 +338,7 @@ public class RunClassfier {
 			for (double learningRate : TEST_LEARNING_RATES) {
 				
 				//Run k-fold cross validation
+				double averageAccuracy = 0.0;
 				for (int crossValidationCounter = 0; crossValidationCounter < crossValidationFolds; ++crossValidationCounter) {
 					
 					PerceptronLinearClassifier classifier = new PerceptronLinearClassifier(false, epochs, learningRate, numberOfFeatures);
@@ -370,13 +376,16 @@ public class RunClassfier {
 					
 					//Get accuracy for this learning rate
 					currentAccuracy = new ClassifierMetrics(testingDataLabels, predictions).getAccuracy();
-					if (currentAccuracy > maximumAccuracy) {
-						maximumAccuracy = currentAccuracy;
-						bestLearningRate = learningRate;
-						bestNumberOfEpochs = epochs;
-					}
+					averageAccuracy += currentAccuracy;
+					
 				}
-				
+				averageAccuracy /= crossValidationFolds;
+				System.out.println("Perceptron Epochs " + epochs + ", learning rate "+ learningRate + " and average accuracy " + df.format(averageAccuracy));
+				if (averageAccuracy > maximumAccuracy) {
+					maximumAccuracy = averageAccuracy;
+					bestLearningRate = learningRate;
+					bestNumberOfEpochs = epochs;
+				}
 			}
 			
 		}
@@ -420,9 +429,12 @@ public class RunClassfier {
 		
 		double currentAccuracy = 0.0, maximumAccuracy = Double.MIN_VALUE, bestLearningRate = 0.0, bestMyu = 0.0;
 		int bestNumberOfEpochs = 0;
-		
+		DecimalFormat df = new DecimalFormat("#.####");
+		df.setRoundingMode(RoundingMode.CEILING);
 		List<LabelsAndFeatures> crossValidationData = getCrossValidationData(crossValidationFolds, labels, featureVectors);
-				
+			
+		System.out.println("\nCross Validation Steps:");
+		
 		for (int epochs : epochValues) {
 			
 			for (double myu : TEST_MYU_VALUES) {
@@ -431,6 +443,7 @@ public class RunClassfier {
 				for (double learningRate : TEST_LEARNING_RATES) {
 					
 					//Run k-fold cross validation
+					double averageAccuracy = 0.0;
 					for (int crossValidationCounter = 0; crossValidationCounter < crossValidationFolds; ++crossValidationCounter) {
 						
 						MarginPerceptron classifier = new MarginPerceptron(false, epochs, learningRate, numberOfFeatures, myu);
@@ -468,14 +481,17 @@ public class RunClassfier {
 						
 						//Get accuracy for this learning rate
 						currentAccuracy = new ClassifierMetrics(testingDataLabels, predictions).getAccuracy();
-						if (currentAccuracy > maximumAccuracy) {
-							maximumAccuracy = currentAccuracy;
-							bestLearningRate = learningRate;
-							bestMyu = myu;
-							bestNumberOfEpochs = epochs;
-						}
+						averageAccuracy += currentAccuracy;
+
 					}
-					
+					averageAccuracy /= crossValidationFolds;
+					System.out.println("Margin Perceptron Epochs " + epochs + ", myu " + myu + ", learning rate "+ learningRate + " and average accuracy " + df.format(averageAccuracy));
+					if (averageAccuracy > maximumAccuracy) {
+						maximumAccuracy = averageAccuracy;
+						bestLearningRate = learningRate;
+						bestMyu = myu;
+						bestNumberOfEpochs = epochs;
+					}
 				}
 			
 			}
@@ -496,14 +512,18 @@ public class RunClassfier {
 		
 		double currentAccuracy = 0.0, maximumAccuracy = Double.MIN_VALUE, bestLearningRate = 0.0, bestMyu = 0.0;
 		int bestNumberOfEpochs = 0;
-		
+		DecimalFormat df = new DecimalFormat("#.####");
+		df.setRoundingMode(RoundingMode.CEILING);
 		List<LabelsAndFeatures> crossValidationData = getCrossValidationData(crossValidationFolds, labels, featureVectors);
+		
+		System.out.println("\nCross Validation Steps:");
 				
 		for (int epochs : epochValues) {
 			
 			for (double myu : TEST_MYU_VALUES) {
 	
 				//Run k-fold cross validation
+				double averageAccuracy = 0.0;
 				for (int crossValidationCounter = 0; crossValidationCounter < crossValidationFolds; ++crossValidationCounter) {
 					
 					MarginPerceptron classifier = new AggressiveMarginPerceptron(false, epochs, numberOfFeatures, myu);
@@ -541,12 +561,16 @@ public class RunClassfier {
 					
 					//Get accuracy for this learning rate
 					currentAccuracy = new ClassifierMetrics(testingDataLabels, predictions).getAccuracy();
-					if (currentAccuracy > maximumAccuracy) {
-						maximumAccuracy = currentAccuracy;
-						bestLearningRate = 0.0;
-						bestMyu = myu;
-						bestNumberOfEpochs = epochs;
-					}
+					averageAccuracy += currentAccuracy;
+				}
+				averageAccuracy /= crossValidationFolds;
+				System.out.println("Aggressive Margin Perceptron Epochs " + epochs + ", myu " + myu + " and average accuracy " + df.format(averageAccuracy));
+
+				if (averageAccuracy > maximumAccuracy) {
+					maximumAccuracy = averageAccuracy;
+					bestLearningRate = 0.0;
+					bestMyu = myu;
+					bestNumberOfEpochs = epochs;
 				}
 					
 			}
